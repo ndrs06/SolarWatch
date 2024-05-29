@@ -11,8 +11,8 @@ public class JsonProcessor : IJsonProcessor
 
         Coordinates coordinates = new Coordinates
         { 
-            Lat = json.RootElement.GetProperty("lat").GetDouble(),
-            Lon = json.RootElement.GetProperty("lon").GetDouble()
+            Lat = json.RootElement[0].GetProperty("lat").GetDouble(),
+            Lon = json.RootElement[0].GetProperty("lon").GetDouble()
         };
 
         return coordinates;
