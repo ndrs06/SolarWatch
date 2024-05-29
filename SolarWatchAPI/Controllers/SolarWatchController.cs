@@ -26,12 +26,25 @@ public class SolarWatchController : ControllerBase
     [HttpGet(Name = "SolarWatch")]
     public ActionResult<SolarWatch> Get(string city, DateTime date)
     {
+        Coordinates coordinates;
         try
         {
-            var coordinates = _jsonProcessor.ProcessCoordinates(_coordinatesProvider.GetCoordinates(city));
-            var solarWatchData = _solarWatchDataProvider.GetCurrent(date, coordinates.Lat, coordinates.Lon);
+            coordinates = _jsonProcessor.ProcessCoordinates(_coordinatesProvider.GetCoordinates(city));
 
-            return Ok(_jsonProcessor.ProcessSolarWatch(solarWatchData));
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e.Message);
+            return NotFound($"Not found city with this name: {city}");
+        }
+        
+        try
+        {
+            var solarWatchData = _solarWatchDataProvider.GetCurrent(date, coordinates.Lat, coordinates.Lon);
+            var solarWatch = _jsonProcessor.ProcessSolarWatch(solarWatchData);
+            solarWatch.City = city;
+
+            return Ok(solarWatch);
         }
         catch (Exception e)
         {
