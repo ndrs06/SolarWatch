@@ -4,5 +4,6 @@ namespace SolarWatchAPI.Service.JsonProcessors;
 
 public interface IJsonProcessor
 {
-    Coordinates Process(string data);
+    Coordinates ProcessCoordinates(string data);
+    SolarWatch ProcessSolarWatch(string data);
 }
