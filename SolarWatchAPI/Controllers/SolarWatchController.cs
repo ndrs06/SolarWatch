@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using SolarWatchAPI.Models;
+using SolarWatchAPI.Model;
 
 namespace SolarWatchAPI.Controllers;
 

@@ -1,4 +1,4 @@
-namespace SolarWatchAPI.Models;
+namespace SolarWatchAPI.Model;
 
 public class Coordinates
 {
