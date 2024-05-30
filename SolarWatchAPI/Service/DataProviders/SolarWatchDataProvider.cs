@@ -11,12 +11,13 @@ public class SolarWatchDataProvider : ISolarWatchDataProvider
         _logger = logger;
     }
 
-    public string GetCurrent(DateTime date, double lat, double lon)
+    public async Task<string> GetCurrent(DateTime date, double lat, double lon)
     {
         var url = $"https://api.sunrise-sunset.org/json?lat={lat}&lng={lon}&date={date}&formatted=0";
 
-        using var client = new WebClient();
+        using var client = new HttpClient();
+        var res = await client.GetAsync(url);
 
-        return client.DownloadString(url);
+        return await res.Content.ReadAsStringAsync();
     }
 }
