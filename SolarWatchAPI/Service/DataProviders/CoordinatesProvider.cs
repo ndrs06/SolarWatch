@@ -15,13 +15,14 @@ public class CoordinatesProvider : ICoordinatesProvider
         var envVars = DotEnv.Read();
         _openWeatherKey = envVars["OPEN_WEATHER_API_KEY"];
     }
-
-    public string GetCoordinates(string city)
+    
+    public async Task<string> GetCoordinates(string city)
     {
         var url = $"http://api.openweathermap.org/geo/1.0/direct?q={city}&appid={_openWeatherKey}";
 
-        using var client = new WebClient();
+        using var client = new HttpClient();
+        var res = await client.GetAsync(url);
 
-        return client.DownloadString(url);
+        return await res.Content.ReadAsStringAsync();
     }
 }
