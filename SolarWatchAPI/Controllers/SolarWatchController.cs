@@ -22,15 +22,15 @@ public class SolarWatchController : ControllerBase
         _solarWatchDataProvider = solarWatchDataProvider;
         _jsonProcessor = jsonProcessor;
     }
-
+    
     [HttpGet(Name = "SolarWatch")]
-    public ActionResult<SolarWatch> Get(string city, DateTime date)
+    public async Task<ActionResult<SolarWatch>> Get(string city, DateTime date)
     {
         Coordinates coordinates;
         try
         {
-            coordinates = _jsonProcessor.ProcessCoordinates(_coordinatesProvider.GetCoordinates(city));
-
+            var coordinatesData = await _coordinatesProvider.GetCoordinates(city);
+            coordinates = _jsonProcessor.ProcessCoordinates(coordinatesData);
         }
         catch (Exception e)
         {
@@ -40,10 +40,9 @@ public class SolarWatchController : ControllerBase
         
         try
         {
-            var solarWatchData = _solarWatchDataProvider.GetCurrent(date, coordinates.Lat, coordinates.Lon);
+            var solarWatchData = await _solarWatchDataProvider.GetCurrent(date, coordinates.Lat, coordinates.Lon);
             var solarWatch = _jsonProcessor.ProcessSolarWatch(solarWatchData);
             solarWatch.City = city;
-
             return Ok(solarWatch);
         }
         catch (Exception e)
