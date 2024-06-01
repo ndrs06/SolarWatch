@@ -7,8 +7,9 @@ public class SunriseSunset
 {
     [Key]
     public int Id { get; init; }
-    public DateTime Sunrise { get; init; }
-    public DateTime Sunset { get; init; }
+    public DateTime Date { get; init; }
+    public TimeOnly Sunrise { get; init; }
+    public TimeOnly Sunset { get; init; }
     
     [ForeignKey("City")]
     public int CityId { get; init; }
