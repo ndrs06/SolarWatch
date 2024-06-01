@@ -17,7 +17,7 @@ namespace SolarWatchAPI.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.0-preview.4.24267.1")
+                .HasAnnotation("ProductVersion", "8.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -67,11 +67,14 @@ namespace SolarWatchAPI.Migrations
                     b.Property<int>("CityId")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("Sunrise")
+                    b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("Sunset")
-                        .HasColumnType("datetime2");
+                    b.Property<TimeOnly>("Sunrise")
+                        .HasColumnType("time");
+
+                    b.Property<TimeOnly>("Sunset")
+                        .HasColumnType("time");
 
                     b.HasKey("Id");
 

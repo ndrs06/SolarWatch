@@ -34,8 +34,9 @@ namespace SolarWatchAPI.Migrations
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Sunrise = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Sunset = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Sunrise = table.Column<TimeOnly>(type: "time", nullable: false),
+                    Sunset = table.Column<TimeOnly>(type: "time", nullable: false),
                     CityId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
