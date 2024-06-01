@@ -1,6 +1,7 @@
 using SolarWatchAPI.Data;
 using SolarWatchAPI.Service.DataProviders;
 using SolarWatchAPI.Service.JsonProcessors;
+using SolarWatchAPI.Service.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +17,9 @@ builder.Services.AddDbContext<SolarWatchApiContext>();
 builder.Services.AddSingleton<ICoordinatesProvider, CoordinatesProvider>();
 builder.Services.AddSingleton<ISolarWatchDataProvider, SolarWatchDataProvider>();
 builder.Services.AddSingleton<IJsonProcessor, JsonProcessor>();
+
+builder.Services.AddScoped<ICityRepository, CityRepository>();
+builder.Services.AddScoped<ISunriseSunsetRepository, SunsetSunriseRepository>();
 
 var app = builder.Build();
 
