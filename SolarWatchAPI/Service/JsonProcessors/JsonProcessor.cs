@@ -5,9 +5,17 @@ namespace SolarWatchAPI.Service.JsonProcessors;
 
 public class JsonProcessor : IJsonProcessor
 {
+    private readonly ILogger<JsonProcessor> _logger;
+
+    public JsonProcessor(ILogger<JsonProcessor> logger)
+    {
+        _logger = logger;
+    }
+
     public Coordinates ProcessCoordinates(string data)
     {
         JsonDocument json = JsonDocument.Parse(data);
+        _logger.LogInformation("Coordinates JSON data parsed");
 
         Coordinates coordinates = new Coordinates
         { 
@@ -33,16 +41,16 @@ public class JsonProcessor : IJsonProcessor
         return solarWatch;
     }
 
-    private DateTime GetDateTimeFromString(string date)
+    private DateTime GetDateTimeFromString(string dateStr)
     {
-        var dateTime = DateTime.Parse(date[..10]);
+        var dateTime = DateTime.Parse(dateStr[..10]);
 
         return dateTime;
     }
 
-    private TimeOnly GetTimeOnlyFromString(string date)
+    private TimeOnly GetTimeOnlyFromString(string dateStr)
     {
-        var time = DateTimeOffset.Parse(date);
+        var time = DateTimeOffset.Parse(dateStr);
         var timeOnly = new TimeOnly(time.TimeOfDay.Hours, time.TimeOfDay.Minutes);
 
         return timeOnly;
