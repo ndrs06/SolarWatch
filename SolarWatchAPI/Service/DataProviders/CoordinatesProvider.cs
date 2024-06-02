@@ -16,9 +16,9 @@ public class CoordinatesProvider : ICoordinatesProvider
         _openWeatherKey = envVars["OPEN_WEATHER_API_KEY"];
     }
     
-    public async Task<string> GetCoordinates(string city)
+    public async Task<string> GetAsync(string cityName)
     {
-        var url = $"http://api.openweathermap.org/geo/1.0/direct?q={city}&appid={_openWeatherKey}";
+        var url = $"http://api.openweathermap.org/geo/1.0/direct?q={cityName}&appid={_openWeatherKey}";
 
         using var client = new HttpClient();
         var res = await client.GetAsync(url);
