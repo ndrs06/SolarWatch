@@ -2,16 +2,16 @@ using System.Net;
 
 namespace SolarWatchAPI.Service.DataProviders;
 
-public class SolarWatchDataProvider : ISolarWatchDataProvider
+public class SolarWatchProvider : ISolarWatchProvider
 {
-    private readonly ILogger<SolarWatchDataProvider> _logger;
+    private readonly ILogger<SolarWatchProvider> _logger;
 
-    public SolarWatchDataProvider(ILogger<SolarWatchDataProvider> logger)
+    public SolarWatchProvider(ILogger<SolarWatchProvider> logger)
     {
         _logger = logger;
     }
 
-    public async Task<string> GetCurrent(DateTime date, double lat, double lon)
+    public async Task<string> GetAsync(DateTime date, double lat, double lon)
     {
         var url = $"https://api.sunrise-sunset.org/json?lat={lat}&lng={lon}&date={date}&formatted=0";
 
