@@ -23,10 +23,10 @@ builder.Services.AddSingleton<IJsonProcessor, JsonProcessor>();
 builder.Services.AddScoped<ICityRepository, CityRepository>();
 builder.Services.AddScoped<ISunriseSunsetRepository, SunsetSunriseRepository>();
 
-builder.Services.AddSingleton<ICityService, CityService>();
-builder.Services.AddSingleton<ISunriseSunsetService, SunriseSunsetService>();
-builder.Services.AddSingleton<ICoordinatesService, CoordinatesService>();
-builder.Services.AddSingleton<ISolarWatchService, SolarWatchService>();
+builder.Services.AddScoped<ICityService, CityService>();
+builder.Services.AddScoped<ISunriseSunsetService, SunriseSunsetService>();
+builder.Services.AddScoped<ICoordinatesService, CoordinatesService>();
+builder.Services.AddScoped<ISolarWatchService, SolarWatchService>();
 
 var app = builder.Build();
 
