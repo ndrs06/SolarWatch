@@ -47,7 +47,9 @@ public class SolarWatchController : ControllerBase
                     {
                         Name = cityName,
                         Lat = coordinates.Lat,
-                        Lon = coordinates.Lon
+                        Lon = coordinates.Lon,
+                        State = "HU",
+                        Coutry = "HU"
                     };
                     _cityService.Add(newCity);
                 }
