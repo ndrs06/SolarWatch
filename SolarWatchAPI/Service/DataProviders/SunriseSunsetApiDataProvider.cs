@@ -2,11 +2,11 @@ using System.Net;
 
 namespace SolarWatchAPI.Service.DataProviders;
 
-public class SolarWatchProvider : ISolarWatchProvider
+public class SunriseSunsetApiDataProvider : ISunriseSunsetApiDataProvider
 {
-    private readonly ILogger<SolarWatchProvider> _logger;
+    private readonly ILogger<SunriseSunsetApiDataProvider> _logger;
 
-    public SolarWatchProvider(ILogger<SolarWatchProvider> logger)
+    public SunriseSunsetApiDataProvider(ILogger<SunriseSunsetApiDataProvider> logger)
     {
         _logger = logger;
     }

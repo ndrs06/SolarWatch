@@ -15,8 +15,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<SolarWatchApiContext>();
 
-builder.Services.AddSingleton<ICoordinatesProvider, CoordinatesProvider>();
-builder.Services.AddSingleton<ISolarWatchProvider, SolarWatchProvider>();
+builder.Services.AddSingleton<IOpenWeatherMapApiDataProvider, OpenWeatherMapApiDataProvider>();
+builder.Services.AddSingleton<ISunriseSunsetApiDataProvider, SunriseSunsetApiDataProvider>();
 
 builder.Services.AddSingleton<IJsonProcessor, JsonProcessor>();
 
