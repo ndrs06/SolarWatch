@@ -25,8 +25,6 @@ builder.Services.AddScoped<ISunriseSunsetRepository, SunsetSunriseRepository>();
 
 builder.Services.AddScoped<ICityService, CityService>();
 builder.Services.AddScoped<ISunriseSunsetService, SunriseSunsetService>();
-builder.Services.AddScoped<ICoordinatesService, CoordinatesService>();
-builder.Services.AddScoped<ISolarWatchService, SolarWatchService>();
 
 var app = builder.Build();
 
