@@ -19,16 +19,4 @@ public class SolarWatchApiContext : DbContext
     {
         optionsBuilder.UseSqlServer(_configuration.GetConnectionString("MSSQL_CONNECTION"));
     }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<City>()
-            .HasIndex(u => u.Name)
-            .IsUnique();
-        
-        modelBuilder.Entity<SunriseSunset>()
-            .HasOne(s => s.City)
-            .WithMany(c => c.SunriseSunsets)  // Defines the one-to-many relationship
-            .HasForeignKey(s => s.CityId);
-    }
 }
