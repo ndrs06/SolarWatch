@@ -17,9 +17,9 @@ public class SunsetSunriseRepository : ISunriseSunsetRepository
         return _dbContext.SunriseSunsets.ToList();
     }
 
-    public SunriseSunset? GetByCityAndDate(int cityId, DateTime date)
+    public SunriseSunset? GetByCityAndDate(string cityName, DateTime date)
     {
-        return _dbContext.SunriseSunsets.FirstOrDefault(s => s.CityId == cityId && s.Date == date);
+        return _dbContext.SunriseSunsets.FirstOrDefault(s => s.CityName == cityName && s.Date == date);
     }
 
     public void Add(SunriseSunset sunriseSunset)
