@@ -7,16 +7,11 @@ public class OpenWeatherMapApiDataProvider : IOpenWeatherMapApiDataProvider
 {
     private readonly ILogger<OpenWeatherMapApiDataProvider> _logger;
     private readonly IConfiguration _configuration;
-    // private readonly string _openWeatherKey;
 
     public OpenWeatherMapApiDataProvider(ILogger<OpenWeatherMapApiDataProvider> logger, IConfiguration configuration)
     {
         _logger = logger;
         _configuration = configuration;
-
-        /*DotEnv.Load();
-        var envVars = DotEnv.Read();
-        _openWeatherKey = envVars["OPEN_WEATHER_API_KEY"];*/
     }
     
     public async Task<string> GetAsync(string cityName)
