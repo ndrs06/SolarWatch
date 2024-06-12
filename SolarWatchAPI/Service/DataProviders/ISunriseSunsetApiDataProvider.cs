@@ -1,6 +1,8 @@
+using SolarWatchAPI.Model;
+
 namespace SolarWatchAPI.Service.DataProviders;
 
 public interface ISunriseSunsetApiDataProvider
 {
-    Task<string> GetAsync(DateTime date, double lat, double lon);
+    Task<string> GetAsync(DateTime date, Coordinates coordinates);
 }
