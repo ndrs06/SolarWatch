@@ -1,6 +1,6 @@
 namespace SolarWatchAPI.Service.DataProviders;
 
-public interface ICoordinatesProvider
+public interface IOpenWeatherMapApiDataProvider
 {
     Task<string> GetAsync(string cityName);
 }

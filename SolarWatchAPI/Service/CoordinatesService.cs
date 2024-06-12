@@ -7,19 +7,19 @@ namespace SolarWatchAPI.Service;
 public class CoordinatesService : ICoordinatesService
 {
     private readonly ILogger<CoordinatesService> _logger;
-    private readonly ICoordinatesProvider _coordinatesProvider;
+    private readonly IOpenWeatherMapApiDataProvider _openWeatherMapApiDataProvider;
     private readonly IJsonProcessor _jsonProcessor;
 
-    public CoordinatesService(ILogger<CoordinatesService> logger, ICoordinatesProvider coordinatesProvider, IJsonProcessor jsonProcessor)
+    public CoordinatesService(ILogger<CoordinatesService> logger, IOpenWeatherMapApiDataProvider openWeatherMapApiDataProvider, IJsonProcessor jsonProcessor)
     {
         _logger = logger;
-        _coordinatesProvider = coordinatesProvider;
+        _openWeatherMapApiDataProvider = openWeatherMapApiDataProvider;
         _jsonProcessor = jsonProcessor;
     }
 
     public async Task<Coordinates> GetAsync(string cityName)
     {
-        var coordinatesData = await _coordinatesProvider.GetAsync(cityName);
+        var coordinatesData = await _openWeatherMapApiDataProvider.GetAsync(cityName);
         return _jsonProcessor.ProcessCoordinates(coordinatesData);
     }
 }

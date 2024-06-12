@@ -3,13 +3,13 @@ using dotenv.net;
 
 namespace SolarWatchAPI.Service.DataProviders;
 
-public class CoordinatesProvider : ICoordinatesProvider
+public class OpenWeatherMapApiDataProvider : IOpenWeatherMapApiDataProvider
 {
-    private readonly ILogger<CoordinatesProvider> _logger;
+    private readonly ILogger<OpenWeatherMapApiDataProvider> _logger;
     private readonly IConfiguration _configuration;
-    private readonly string _openWeatherKey;
+    // private readonly string _openWeatherKey;
 
-    public CoordinatesProvider(ILogger<CoordinatesProvider> logger, IConfiguration configuration)
+    public OpenWeatherMapApiDataProvider(ILogger<OpenWeatherMapApiDataProvider> logger, IConfiguration configuration)
     {
         _logger = logger;
         _configuration = configuration;
