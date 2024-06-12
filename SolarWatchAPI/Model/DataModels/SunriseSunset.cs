@@ -10,8 +10,7 @@ public class SunriseSunset
     public DateTime Date { get; init; }
     public TimeOnly Sunrise { get; init; }
     public TimeOnly Sunset { get; init; }
-    
-    [ForeignKey("City")]
-    public int CityId { get; init; }
-    public City City { get; init; }
+
+    [ForeignKey("CityName")]
+    public string CityName { get; set; }
 }
