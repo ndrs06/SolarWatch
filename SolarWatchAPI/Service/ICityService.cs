@@ -1,3 +1,4 @@
+using SolarWatchAPI.Model;
 using SolarWatchAPI.Model.DataModels;
 
 namespace SolarWatchAPI.Service;
@@ -5,5 +6,6 @@ namespace SolarWatchAPI.Service;
 public interface ICityService
 {
     City? GetByName(string cityName);
-    void Add(City city);
+    void AddCityToDb();
+    Task<Coordinates> GetCityCoordinatesAsync(string cityName);
 }
