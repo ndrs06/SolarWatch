@@ -8,16 +8,11 @@ public class SolarWatchApiContext : DbContext
 {
     public DbSet<City> Cities { get; set; }
     public DbSet<SunriseSunset> SunriseSunsets { get; set; }
-    private IConfiguration _configuration;
-    private readonly string _connectionString;
-    
+    private readonly IConfiguration _configuration;
 
     public SolarWatchApiContext(IConfiguration configuration)
     {
         _configuration = configuration;
-        /*DotEnv.Load();
-        var enVars = DotEnv.Read();
-        _connectionString = enVars["MSSQL_CONNECTION"];*/
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
