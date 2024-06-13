@@ -9,7 +9,7 @@ public class City
     public double Lat { get; init; }
     public double Lon { get; init; }
     public string State { get; init; }
-    public string Coutry { get; init; }
+    public string Country { get; init; }
     
     public ICollection<SunriseSunset> SunriseSunsets { get; init; }
 }
