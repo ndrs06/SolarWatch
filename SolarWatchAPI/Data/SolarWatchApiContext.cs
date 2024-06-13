@@ -1,4 +1,3 @@
-using dotenv.net;
 using Microsoft.EntityFrameworkCore;
 using SolarWatchAPI.Model.DataModels;
 
@@ -8,29 +7,15 @@ public class SolarWatchApiContext : DbContext
 {
     public DbSet<City> Cities { get; set; }
     public DbSet<SunriseSunset> SunriseSunsets { get; set; }
-    private readonly string _connectionString;
+    private readonly IConfiguration _configuration;
 
-    public SolarWatchApiContext()
+    public SolarWatchApiContext(IConfiguration configuration)
     {
-        DotEnv.Load();
-        var enVars = DotEnv.Read();
-        _connectionString = enVars["MSSQL_CONNECTION"];
+        _configuration = configuration;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer(_connectionString);
-    }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        modelBuilder.Entity<City>()
-            .HasIndex(u => u.Name)
-            .IsUnique();
-        
-        modelBuilder.Entity<SunriseSunset>()
-            .HasOne(s => s.City)
-            .WithMany(c => c.SunriseSunsets)  // Defines the one-to-many relationship
-            .HasForeignKey(s => s.CityId);
+        optionsBuilder.UseSqlServer(_configuration.GetConnectionString("MSSQL_CONNECTION"));
     }
 }
