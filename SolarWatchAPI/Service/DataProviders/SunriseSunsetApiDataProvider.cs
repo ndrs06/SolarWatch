@@ -1,4 +1,3 @@
-using System.Net;
 using SolarWatchAPI.Model;
 
 namespace SolarWatchAPI.Service.DataProviders;

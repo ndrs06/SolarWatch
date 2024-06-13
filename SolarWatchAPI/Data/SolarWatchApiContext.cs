@@ -1,4 +1,3 @@
-using dotenv.net;
 using Microsoft.EntityFrameworkCore;
 using SolarWatchAPI.Model.DataModels;
 

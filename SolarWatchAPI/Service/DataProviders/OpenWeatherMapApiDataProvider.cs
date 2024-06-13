@@ -1,6 +1,3 @@
-using System.Net;
-using dotenv.net;
-
 namespace SolarWatchAPI.Service.DataProviders;
 
 public class OpenWeatherMapApiDataProvider : IOpenWeatherMapApiDataProvider
