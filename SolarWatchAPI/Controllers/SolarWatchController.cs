@@ -40,9 +40,16 @@ public class SolarWatchController : ControllerBase
             else
             {
                 _logger.LogInformation($"DB does not contain city with this name: {cityName}");
-                
-                coordinates = await _cityService.GetCityCoordinatesAsync(cityName);
-                _logger.LogInformation("Coordinates data fetched from external API");
+                try
+                {
+                    coordinates = await _cityService.GetCityCoordinatesAsync(cityName);
+                    _logger.LogInformation("Coordinates data fetched from external API");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                    return NotFound("");
+                }
 
                 try
                 {
@@ -74,7 +81,7 @@ public class SolarWatchController : ControllerBase
             catch (Exception e)
             {
                 _logger.LogError(e, e.Message);
-                return BadRequest($"Failed to get sunrise/sunset data from DB: {e.Message}");
+                return NotFound($"Failed to get sunrise/sunset data from DB: {e.Message}");
             }
 
             try
@@ -105,7 +112,7 @@ public class SolarWatchController : ControllerBase
         catch (Exception e)
         {
             _logger.LogError(e, e.Message);
-            return BadRequest(e.Message);
+            return NotFound(e.Message);
         }
     }
 }
