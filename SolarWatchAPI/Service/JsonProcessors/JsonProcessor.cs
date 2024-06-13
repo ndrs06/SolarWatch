@@ -55,7 +55,7 @@ public class JsonProcessor : IJsonProcessor
             Lat = cityElement.TryGetProperty("lat", out JsonElement latElement) ? latElement.GetDouble() : 0.0,
             Lon = cityElement.TryGetProperty("lon", out JsonElement lonElement) ? lonElement.GetDouble() : 0.0,
             State = cityElement.TryGetProperty("state", out JsonElement stateElement) ? stateElement.GetString() ?? "NAN" : "NAN",
-            Coutry = cityElement.TryGetProperty("country", out JsonElement countryElement) ? countryElement.GetString() ?? "NAN" : "NAN",
+            Country = cityElement.TryGetProperty("country", out JsonElement countryElement) ? countryElement.GetString() ?? "NAN" : "NAN",
         };
 
         return city;

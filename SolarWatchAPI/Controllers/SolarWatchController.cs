@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SolarWatchAPI.Model;
 using SolarWatchAPI.Model.DataModels;
+using SolarWatchAPI.Model.RequestModels;
 using SolarWatchAPI.Service;
 
 namespace SolarWatchAPI.Controllers;
@@ -20,7 +22,7 @@ public class SolarWatchController : ControllerBase
         _sunriseSunsetService = sunriseSunsetService;
     }
 
-    [HttpGet(Name = "SolarWatch")]
+    [HttpGet(Name = "SolarWatch"), Authorize]
     public async Task<ActionResult<SolarWatch>> Get(string cityName, DateTime date)
     {
         City? dbCity;
@@ -113,6 +115,84 @@ public class SolarWatchController : ControllerBase
         {
             _logger.LogError(e, e.Message);
             return NotFound(e.Message);
+        }
+    }
+
+    [HttpPost("addNewCityToDb"), Authorize(Roles="Admin")]
+    public async Task<ActionResult<string>> PostCityToDb(string cityName)
+    {
+        try
+        {
+            var city = _cityService.GetByName(cityName);
+
+            if (city == null)
+            {
+                var newCity = await _cityService.GetCityAsync(cityName);
+                _cityService.AddCityToDb(newCity);
+
+                return Ok($"{cityName} added to DB");
+            }
+
+            return BadRequest($"{cityName} already exist in DB");
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return BadRequest(e.Message);
+        }
+    }
+    
+    [HttpDelete("deleteCityFromDb"), Authorize(Roles="Admin")]
+    public ActionResult<string> DeleteCityFromDb(string cityName)
+    {
+        try
+        {
+            var city = _cityService.GetByName(cityName);
+
+            if (city != null)
+            {
+                _cityService.DeleteCityFromDb(city);
+
+                return Ok($"{cityName} deleted from DB");
+            }
+
+            return NotFound($"{cityName} does not exist in DB");
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return BadRequest(e.Message);
+        }
+    }
+    
+    [HttpPut("addNewCityToDb/{cityName}"), Authorize(Roles="Admin")]
+    public ActionResult<string> UpdateCityInDb(string cityName, [FromBody] CityRequest request)
+    {
+        try
+        {
+            var city = _cityService.GetByName(cityName);
+
+            if (city != null)
+            {
+                var updatedCity = new City
+                {
+                    Name = cityName,
+                    Lat = (int)request.Lat == 0 ? city.Lat : request.Lon,
+                    Lon = (int)request.Lon == 0 ? city.Lon : request.Lon,
+                    State = request.State == "string" ? city.State : request.State,
+                    Country = request.Country == "string" ? city.Country : request.Country
+                };
+                _cityService.UpdateCityInDb(updatedCity);
+
+                return Ok($"{cityName} updated in DB");
+            }
+
+            return NotFound($"{cityName} does not exist in DB");
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return BadRequest(e.Message);
         }
     }
 }
