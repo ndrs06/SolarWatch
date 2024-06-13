@@ -4,6 +4,7 @@ using Moq;
 using NUnit.Framework;
 using SolarWatchAPI.Controllers;
 using SolarWatchAPI.Model;
+using SolarWatchAPI.Service;
 using SolarWatchAPI.Service.DataProviders;
 using SolarWatchAPI.Service.JsonProcessors;
 
@@ -12,26 +13,25 @@ namespace SolarWatchAPITest;
 public class SolarWatchControllerTest
 {
     private Mock<ILogger<SolarWatchController>> _loggerMock;
-    private Mock<ISolarWatchDataProvider> _solarWatchDataProviderMock;
-    private Mock<ICoordinatesProvider> _coordinatesProviderMock;
-    private Mock<IJsonProcessor> _jsonProcessorMock;
+    private Mock<ISunriseSunsetService> _sunriseSunsetServiceMock;
+    private Mock<ICityService> _cityServiceMock;
     private SolarWatchController _solarWatchController;
+    
 
     [SetUp]
     public void SetUp()
     {
         _loggerMock = new Mock<ILogger<SolarWatchController>>();
-        _solarWatchDataProviderMock = new Mock<ISolarWatchDataProvider>();
-        _coordinatesProviderMock = new Mock<ICoordinatesProvider>();
-        _jsonProcessorMock = new Mock<IJsonProcessor>();
-        _solarWatchController = new SolarWatchController(_loggerMock.Object, _coordinatesProviderMock.Object, _solarWatchDataProviderMock.Object, _jsonProcessorMock.Object);
+        _sunriseSunsetServiceMock = new Mock<ISunriseSunsetService>();
+        _cityServiceMock = new Mock<ICityService>();
+        _solarWatchController = new SolarWatchController(_loggerMock.Object, _cityServiceMock.Object, _sunriseSunsetServiceMock.Object);
     }
 
     [Test]
     public async Task Get_ReturnsNotFoundIfCityNameIsInvalid()
     {
         // Arrange
-        _coordinatesProviderMock.Setup(x => x.GetCoordinates(It.IsAny<string>())).Throws(new Exception());
+        _cityServiceMock.Setup(x => x.GetCityCoordinatesAsync(It.IsAny<string>())).Throws(new Exception());
         var city = "kdjhfélsjhédg";
         var date = DateTime.Today;
         
@@ -46,9 +46,8 @@ public class SolarWatchControllerTest
     public async Task Get_ReturnsNotFoundIfCoordinateDataIsInvalid()
     {
         // Arrange
-        var coordinatesData = "{}";
-        _coordinatesProviderMock.Setup(x => x.GetCoordinates(It.IsAny<string>())).ReturnsAsync(coordinatesData);
-        _jsonProcessorMock.Setup(x => x.ProcessCoordinates(coordinatesData)).Throws<Exception>();
+        var coordinates = new Coordinates();
+        _cityServiceMock.Setup(x => x.GetCityCoordinatesAsync(It.IsAny<string>())).ReturnsAsync(coordinates);
         
         var city = "Miskolc";
         var date = DateTime.Today;
@@ -64,7 +63,7 @@ public class SolarWatchControllerTest
     public async Task Get_ReturnsNotFoundIfCoordinatesIsInvalid()
     {
         // Arrange
-        _solarWatchDataProviderMock.Setup(x => x.GetCurrent(It.IsAny<DateTime>(), It.IsAny<double>(), It.IsAny<double>())).Throws(new Exception());
+        _sunriseSunsetServiceMock.Setup(x => x.GetSolarWatchAsync(It.IsAny<DateTime>(), It.IsAny<Coordinates>())).Throws(new Exception());
         var city = "Miskolc";
         var date = DateTime.Today;
         
@@ -79,9 +78,8 @@ public class SolarWatchControllerTest
     public async Task Get_ReturnsNotFoundIfSolarWatchDataIsInvalid()
     {
         // Arrange
-        var solarWatchData = "{}";
-        _solarWatchDataProviderMock.Setup(x => x.GetCurrent(It.IsAny<DateTime>(), It.IsAny<double>(), It.IsAny<double>())).ReturnsAsync(solarWatchData);
-        _jsonProcessorMock.Setup(x => x.ProcessSolarWatch(solarWatchData)).Throws<Exception>();
+        var solarWatch = new SolarWatch();
+        _sunriseSunsetServiceMock.Setup(x => x.GetSolarWatchAsync(It.IsAny<DateTime>(), It.IsAny<Coordinates>())).ReturnsAsync(solarWatch);
         
         var city = "Miskolc";
         var date = DateTime.Today;
@@ -98,14 +96,12 @@ public class SolarWatchControllerTest
     {
         // Arrange
 
-        var expectedCoordinatesData = new Coordinates();
-        var expectedSolarWatchData = new SolarWatch();
+        var expectedCoordinates = new Coordinates();
+        var expectedSolarWatch = new SolarWatch();
         var data = "{}";
-        _coordinatesProviderMock.Setup(x => x.GetCoordinates(It.IsAny<string>())).ReturnsAsync(data);
-        _solarWatchDataProviderMock
-            .Setup(x => x.GetCurrent(It.IsAny<DateTime>(), It.IsAny<double>(), It.IsAny<double>())).ReturnsAsync(data);
-        _jsonProcessorMock.Setup(x => x.ProcessCoordinates(data)).Returns(expectedCoordinatesData);
-        _jsonProcessorMock.Setup(x => x.ProcessSolarWatch(data)).Returns(expectedSolarWatchData);
+        _cityServiceMock.Setup(x => x.GetCityCoordinatesAsync(It.IsAny<string>())).ReturnsAsync(expectedCoordinates);
+        _sunriseSunsetServiceMock
+            .Setup(x => x.GetSolarWatchAsync(It.IsAny<DateTime>(), It.IsAny<Coordinates>())).ReturnsAsync(expectedSolarWatch);
         
         var city = "Miskolc";
         var date = DateTime.Today;
