@@ -12,7 +12,7 @@ using SolarWatchAPI.Data;
 namespace SolarWatchAPI.Migrations
 {
     [DbContext(typeof(SolarWatchApiContext))]
-    [Migration("20240531132826_InitialCreate")]
+    [Migration("20240613133841_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -20,20 +20,17 @@ namespace SolarWatchAPI.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.0-preview.4.24267.1")
+                .HasAnnotation("ProductVersion", "8.0.6")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
             modelBuilder.Entity("SolarWatchAPI.Model.DataModels.City", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Coutry")
+                    b.Property<string>("Country")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -43,18 +40,11 @@ namespace SolarWatchAPI.Migrations
                     b.Property<double>("Lon")
                         .HasColumnType("float");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
-
                     b.Property<string>("State")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("Id");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
+                    b.HasKey("Name");
 
                     b.ToTable("Cities");
                 });
@@ -67,31 +57,33 @@ namespace SolarWatchAPI.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("CityId")
-                        .HasColumnType("int");
+                    b.Property<string>("CityName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<DateTime>("Sunrise")
+                    b.Property<DateTime>("Date")
                         .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("Sunset")
-                        .HasColumnType("datetime2");
+                    b.Property<TimeOnly>("Sunrise")
+                        .HasColumnType("time");
+
+                    b.Property<TimeOnly>("Sunset")
+                        .HasColumnType("time");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CityId");
+                    b.HasIndex("CityName");
 
                     b.ToTable("SunriseSunsets");
                 });
 
             modelBuilder.Entity("SolarWatchAPI.Model.DataModels.SunriseSunset", b =>
                 {
-                    b.HasOne("SolarWatchAPI.Model.DataModels.City", "City")
+                    b.HasOne("SolarWatchAPI.Model.DataModels.City", null)
                         .WithMany("SunriseSunsets")
-                        .HasForeignKey("CityId")
+                        .HasForeignKey("CityName")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("City");
                 });
 
             modelBuilder.Entity("SolarWatchAPI.Model.DataModels.City", b =>
