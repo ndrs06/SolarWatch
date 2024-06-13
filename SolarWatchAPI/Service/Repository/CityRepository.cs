@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using SolarWatchAPI.Data;
 using SolarWatchAPI.Model.DataModels;
 
@@ -33,10 +34,14 @@ public class CityRepository : ICityRepository
         _dbContext.Remove(city);
         _dbContext.SaveChanges();
     }
-
+    
     public void Update(City city)
     {
-        _dbContext.Update(city);
-        _dbContext.SaveChanges();
+        var existingCity = GetByName(city.Name);
+        if (existingCity != null)
+        {
+            Delete(existingCity);
+            Add(city);
+        }
     }
 }
