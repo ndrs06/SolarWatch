@@ -8,7 +8,7 @@ using SolarWatchAPI.Service;
 namespace SolarWatchAPI.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class SolarWatchController : ControllerBase
 {
     private readonly ILogger<SolarWatchController> _logger;
