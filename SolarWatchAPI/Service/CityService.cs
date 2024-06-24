@@ -12,7 +12,6 @@ public class CityService : ICityService
     private readonly ICityRepository _cityRepository;
     private readonly IOpenWeatherMapApiDataProvider _openWeatherMapApiDataProvider;
     private readonly IJsonProcessor _jsonProcessor;
-    private string? OpenWeatherJsonData { get; set; }
 
     public CityService(ILogger<CityService> logger, ICityRepository cityRepository, IJsonProcessor jsonProcessor, IOpenWeatherMapApiDataProvider openWeatherMapApiDataProvider)
     {
@@ -27,13 +26,8 @@ public class CityService : ICityService
         return _cityRepository.GetByName(cityName);
     }
 
-    public void AddCityToDb(City? city = null)
+    public void AddCityToDb(City city)
     {
-        if (city == null)
-        {
-            city = _jsonProcessor.ProcessCity(OpenWeatherJsonData);
-        }
-        
         _cityRepository.Add(city);
     }
 
@@ -47,17 +41,18 @@ public class CityService : ICityService
         _cityRepository.Update(city);
     }
 
-    public async Task<Coordinates> GetCityCoordinatesAsync(string? cityName)
+    public async Task<string> GetOpenWeatherMapApiDataAsync(string cityName)
     {
-        OpenWeatherJsonData = await _openWeatherMapApiDataProvider.GetAsync(cityName);
-        
-        return _jsonProcessor.ProcessCoordinates(OpenWeatherJsonData);
+        return await _openWeatherMapApiDataProvider.GetAsync(cityName);
     }
 
-    public async Task<City> GetCityAsync(string cityName)
+    public Coordinates ProcessCityCoordinates(string jsonData)
     {
-        OpenWeatherJsonData = await _openWeatherMapApiDataProvider.GetAsync(cityName);
-        
-        return _jsonProcessor.ProcessCity(OpenWeatherJsonData);
+        return _jsonProcessor.ProcessCoordinates(jsonData);
+    }
+
+    public City ProcessCity(string jsonData)
+    {
+        return _jsonProcessor.ProcessCity(jsonData);
     }
 }
