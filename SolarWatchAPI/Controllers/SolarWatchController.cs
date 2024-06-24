@@ -4,6 +4,7 @@ using SolarWatchAPI.Model;
 using SolarWatchAPI.Model.DataModels;
 using SolarWatchAPI.Model.RequestModels;
 using SolarWatchAPI.Service;
+using SolarWatchAPI.Service.DataProviders;
 
 namespace SolarWatchAPI.Controllers;
 
@@ -22,9 +23,11 @@ public class SolarWatchController : ControllerBase
         _sunriseSunsetService = sunriseSunsetService;
     }
 
-    [HttpGet(Name = "SolarWatch"), Authorize]
+    [HttpGet(Name = "SolarWatch/{cityName}/{date}")]
     public async Task<ActionResult<SolarWatch>> Get(string cityName, DateTime date)
     {
+        string openWeatherMapJsonData;
+        string sunriseSunsetJsonData;
         City? dbCity;
         SunriseSunset? dbSunriseSunset;
         Coordinates coordinates;
@@ -44,18 +47,21 @@ public class SolarWatchController : ControllerBase
                 _logger.LogInformation($"DB does not contain city with this name: {cityName}");
                 try
                 {
-                    coordinates = await _cityService.GetCityCoordinatesAsync(cityName);
+                    openWeatherMapJsonData = await _cityService.GetOpenWeatherMapApiDataAsync(cityName);
+                    coordinates = _cityService.ProcessCityCoordinates(openWeatherMapJsonData);
+                    
                     _logger.LogInformation("Coordinates data fetched from external API");
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e);
+                    _logger.LogError(e, e.Message);
                     return NotFound("");
                 }
 
                 try
                 {
-                    _cityService.AddCityToDb();
+                    var newCity = _cityService.ProcessCity(openWeatherMapJsonData);
+                    _cityService.AddCityToDb(newCity);
                     _logger.LogInformation($"City: {cityName} added to DB");
                 }
                 catch (Exception e)
@@ -88,8 +94,10 @@ public class SolarWatchController : ControllerBase
 
             try
             {
-                solarWatch = await _sunriseSunsetService.GetSolarWatchAsync(date, coordinates);
+                sunriseSunsetJsonData = await _sunriseSunsetService.GetSunriseSunsetApiDataAsync(date, coordinates);
+                solarWatch = _sunriseSunsetService.ProcessSolarWatch(sunriseSunsetJsonData);
                 solarWatch.City = cityName;
+                
                 _logger.LogInformation("SunriseSunset data fetched from external API");
             }
             catch (Exception e)
@@ -100,7 +108,9 @@ public class SolarWatchController : ControllerBase
 
             try
             {
-                _sunriseSunsetService.AddSunriseSunsetToDb(cityName);
+                var newSunriseSunset = _sunriseSunsetService.ProcessSunriseSunset(sunriseSunsetJsonData);
+                newSunriseSunset.CityName = cityName;
+                _sunriseSunsetService.AddSunriseSunsetToDb(newSunriseSunset);
                 _logger.LogInformation($"SunriseSunset with date: {date} added to {cityName} in DB");
             }
             catch (Exception e)
@@ -127,7 +137,8 @@ public class SolarWatchController : ControllerBase
 
             if (city == null)
             {
-                var newCity = await _cityService.GetCityAsync(cityName);
+                var jsonData = await _cityService.GetOpenWeatherMapApiDataAsync(cityName);
+                var newCity = _cityService.ProcessCity(jsonData);
                 _cityService.AddCityToDb(newCity);
 
                 return Ok($"{cityName} added to DB");
