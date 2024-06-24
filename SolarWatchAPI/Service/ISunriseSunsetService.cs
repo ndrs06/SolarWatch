@@ -6,6 +6,8 @@ namespace SolarWatchAPI.Service;
 public interface ISunriseSunsetService
 {
     SunriseSunset? GetByCityIdAndDate(string cityName, DateTime date);
-    void AddSunriseSunsetToDb(string cityName);
-    Task<SolarWatch> GetSolarWatchAsync(DateTime date, Coordinates coordinates);
+    void AddSunriseSunsetToDb(SunriseSunset sunriseSunset);
+    Task<string> GetSunriseSunsetApiDataAsync(DateTime date, Coordinates coordinates);
+    SolarWatch ProcessSolarWatch(string jsonData);
+    SunriseSunset ProcessSunriseSunset(string jsonData);
 }
