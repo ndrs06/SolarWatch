@@ -14,6 +14,9 @@ export default function Navbar() {
             <Link to="/sign-up">
                 <button>SignUp</button>
             </Link>
+            <Link to="/solar-watch">
+                <button>SolarWatch</button>
+            </Link>
         </div>
     );
 }
