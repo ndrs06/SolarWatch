@@ -54,6 +54,10 @@ public class AuthController : ControllerBase
             return BadRequest(ModelState);
         }
 
+        var token = result.Token;
+        
+        HttpContext.Response.Cookies.Append("access_token", token, new CookieOptions{HttpOnly = true});
+
         return Ok(new AuthResponse(result.Email, result.UserName, result.Token));
     }
     
