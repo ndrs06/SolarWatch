@@ -12,7 +12,6 @@ public class SunriseSunsetService : ISunriseSunsetService
     private readonly ISunriseSunsetRepository _sunriseSunsetRepository;
     private readonly ISunriseSunsetApiDataProvider _sunriseSunsetApiDataProvider;
     private readonly IJsonProcessor _jsonProcessor;
-    private string? SunriseSunsetJsonData  { get; set; }
 
     public SunriseSunsetService(ILogger<SunriseSunsetService> logger, ISunriseSunsetRepository sunriseSunsetRepository, ISunriseSunsetApiDataProvider sunriseSunsetApiDataProvider, IJsonProcessor jsonProcessor)
     {
@@ -27,18 +26,23 @@ public class SunriseSunsetService : ISunriseSunsetService
         return _sunriseSunsetRepository.GetByCityAndDate(cityName, date);
     }
     
-    public void AddSunriseSunsetToDb(string cityName)
+    public void AddSunriseSunsetToDb(SunriseSunset sunriseSunset)
     {
-        var sunriseSunset = _jsonProcessor.ProcessSunriseSunset(SunriseSunsetJsonData);
-        sunriseSunset.CityName = cityName;
-        
         _sunriseSunsetRepository.Add(sunriseSunset);
     }
 
-    public async Task<SolarWatch> GetSolarWatchAsync(DateTime date, Coordinates coordinates)
+    public async Task<string> GetSunriseSunsetApiDataAsync(DateTime date, Coordinates coordinates)
     {
-        SunriseSunsetJsonData = await _sunriseSunsetApiDataProvider.GetAsync(date, coordinates);
+        return await _sunriseSunsetApiDataProvider.GetAsync(date, coordinates);
+    }
 
-        return _jsonProcessor.ProcessSolarWatch(SunriseSunsetJsonData);
+    public SolarWatch ProcessSolarWatch(string jsonData)
+    {
+        return _jsonProcessor.ProcessSolarWatch(jsonData);
+    }
+
+    public SunriseSunset ProcessSunriseSunset(string jsonData)
+    {
+        return _jsonProcessor.ProcessSunriseSunset(jsonData);
     }
 }

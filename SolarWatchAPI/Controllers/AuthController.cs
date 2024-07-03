@@ -6,7 +6,7 @@ using SolarWatchAPI.Service.Authentication;
 namespace SolarWatchAPI.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
     private readonly IAuthService _authenticationService;
@@ -53,6 +53,10 @@ public class AuthController : ControllerBase
             AddErrors(result);
             return BadRequest(ModelState);
         }
+
+        var token = result.Token;
+        
+        HttpContext.Response.Cookies.Append("access_token", token, new CookieOptions{HttpOnly = true});
 
         return Ok(new AuthResponse(result.Email, result.UserName, result.Token));
     }
