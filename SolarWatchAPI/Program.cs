@@ -67,7 +67,6 @@ builder.Services.AddSwaggerGen(option =>
 
 #region Add DB Context
 builder.Services.AddDbContext<SolarWatchApiContext>();
-builder.Services.AddDbContext<UsersContext>();
 #endregion
 
 #region Add Authentication
@@ -113,7 +112,7 @@ builder.Services
         options.Password.RequireLowercase = true;
     })
     .AddRoles<IdentityRole>()
-    .AddEntityFrameworkStores<UsersContext>();
+    .AddEntityFrameworkStores<SolarWatchApiContext>();
 
 #endregion
 
