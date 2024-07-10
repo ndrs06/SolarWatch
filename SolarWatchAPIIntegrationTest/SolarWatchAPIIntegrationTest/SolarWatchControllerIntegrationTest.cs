@@ -36,7 +36,7 @@ public class SolarWatchControllerIntegrationTest
                 Lon = 19.0402
             });
 
-        _sunriseSunsetServiceMock.Setup(service => service.GetByCityIdAndDate(It.IsAny<string>(), It.IsAny<DateTime>()))
+        _sunriseSunsetServiceMock.Setup(service => service.GetByCityNameAndDate(It.IsAny<string>(), It.IsAny<DateTime>()))
             .Returns((string cityName, DateTime date) => new SunriseSunset
             {
                 CityName = cityName,

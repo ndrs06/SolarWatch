@@ -3,10 +3,10 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
-namespace SolarWatchAPI.Migrations.Users
+namespace SolarWatchAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class initialMigration : Migration
+    public partial class InitialMigration : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -48,6 +48,21 @@ namespace SolarWatchAPI.Migrations.Users
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Cities",
+                columns: table => new
+                {
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Lat = table.Column<double>(type: "float", nullable: false),
+                    Lon = table.Column<double>(type: "float", nullable: false),
+                    State = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Country = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Cities", x => x.Name);
                 });
 
             migrationBuilder.CreateTable(
@@ -156,6 +171,28 @@ namespace SolarWatchAPI.Migrations.Users
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "SunriseSunsets",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Sunrise = table.Column<TimeOnly>(type: "time", nullable: false),
+                    Sunset = table.Column<TimeOnly>(type: "time", nullable: false),
+                    CityName = table.Column<string>(type: "nvarchar(450)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SunriseSunsets", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SunriseSunsets_Cities_CityName",
+                        column: x => x.CityName,
+                        principalTable: "Cities",
+                        principalColumn: "Name",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -194,6 +231,11 @@ namespace SolarWatchAPI.Migrations.Users
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SunriseSunsets_CityName",
+                table: "SunriseSunsets",
+                column: "CityName");
         }
 
         /// <inheritdoc />
@@ -215,10 +257,16 @@ namespace SolarWatchAPI.Migrations.Users
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "SunriseSunsets");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Cities");
         }
     }
 }

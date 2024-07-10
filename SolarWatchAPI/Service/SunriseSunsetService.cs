@@ -21,9 +21,9 @@ public class SunriseSunsetService : ISunriseSunsetService
         _jsonProcessor = jsonProcessor;
     }
 
-    public SunriseSunset? GetByCityIdAndDate(string cityName, DateTime date)
+    public SunriseSunset? GetByCityNameAndDate(string cityName, DateTime date)
     {
-        return _sunriseSunsetRepository.GetByCityAndDate(cityName, date);
+        return _sunriseSunsetRepository.GetByCityNameAndDate(cityName, date);
     }
     
     public void AddSunriseSunsetToDb(SunriseSunset sunriseSunset)

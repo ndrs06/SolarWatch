@@ -9,11 +9,11 @@ using SolarWatchAPI.Data;
 
 #nullable disable
 
-namespace SolarWatchAPI.Migrations.Users
+namespace SolarWatchAPI.Migrations
 {
-    [DbContext(typeof(UsersContext))]
-    [Migration("20240612154751_initialMigration")]
-    partial class initialMigration
+    [DbContext(typeof(SolarWatchApiContext))]
+    [Migration("20240705075435_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -223,6 +223,58 @@ namespace SolarWatchAPI.Migrations.Users
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("SolarWatchAPI.Model.DataModels.City", b =>
+                {
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("Country")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("Lat")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Lon")
+                        .HasColumnType("float");
+
+                    b.Property<string>("State")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Name");
+
+                    b.ToTable("Cities");
+                });
+
+            modelBuilder.Entity("SolarWatchAPI.Model.DataModels.SunriseSunset", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("CityName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<TimeOnly>("Sunrise")
+                        .HasColumnType("time");
+
+                    b.Property<TimeOnly>("Sunset")
+                        .HasColumnType("time");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CityName");
+
+                    b.ToTable("SunriseSunsets");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -272,6 +324,20 @@ namespace SolarWatchAPI.Migrations.Users
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("SolarWatchAPI.Model.DataModels.SunriseSunset", b =>
+                {
+                    b.HasOne("SolarWatchAPI.Model.DataModels.City", null)
+                        .WithMany("SunriseSunsets")
+                        .HasForeignKey("CityName")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SolarWatchAPI.Model.DataModels.City", b =>
+                {
+                    b.Navigation("SunriseSunsets");
                 });
 #pragma warning restore 612, 618
         }
