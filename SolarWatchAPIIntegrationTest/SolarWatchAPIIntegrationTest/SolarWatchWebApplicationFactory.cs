@@ -8,14 +8,19 @@ namespace SolarWatchAPIIntegrationTest;
 
 public class SolarWatchWebApplicationFactory : WebApplicationFactory<Program>
 {
-    private readonly string _dbSolarWatch = Guid.NewGuid().ToString();
+    /*private readonly string _dbSolarWatch = Guid.NewGuid().ToString();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         builder.ConfigureServices(services =>
         {
-            var solarWatchDbContextDescriptor = services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<SolarWatchApiContext>));
-            services.Remove(solarWatchDbContextDescriptor);
+            var solarWatchDbContextDescriptor = services.SingleOrDefault(d => 
+                    d.ServiceType == typeof(DbContextOptions<SolarWatchApiContext>));
+
+            if (solarWatchDbContextDescriptor != null)
+            {
+                services.Remove(solarWatchDbContextDescriptor);
+            }
             
             services.AddDbContext<SolarWatchApiContext>(options =>
             {
@@ -28,5 +33,5 @@ public class SolarWatchWebApplicationFactory : WebApplicationFactory<Program>
             solarContext.Database.EnsureDeleted();
             solarContext.Database.EnsureCreated();
         });
-    }
+    }*/
 }

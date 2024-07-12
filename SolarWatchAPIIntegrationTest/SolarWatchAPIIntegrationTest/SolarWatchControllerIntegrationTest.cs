@@ -1,5 +1,7 @@
 using System.Net.Http.Json;
+using Microsoft.Extensions.Logging;
 using Moq;
+using SolarWatchAPI.Controllers;
 using SolarWatchAPI.Model;
 using SolarWatchAPI.Model.DataModels;
 using SolarWatchAPI.Service;
@@ -13,6 +15,7 @@ public class SolarWatchControllerIntegrationTest
 {
     private readonly SolarWatchWebApplicationFactory _app;
     private readonly HttpClient _client;
+    private readonly Mock<ILogger<SolarWatchController>> _loggerMock;
     private readonly Mock<ICityService> _cityServiceMock;
     private readonly Mock<ISunriseSunsetService> _sunriseSunsetServiceMock;
 
@@ -20,6 +23,7 @@ public class SolarWatchControllerIntegrationTest
     {
         _app = new SolarWatchWebApplicationFactory();
         _client = _app.CreateClient();
+        _loggerMock = new Mock<ILogger<SolarWatchController>>();
         _cityServiceMock = new Mock<ICityService>();
         _sunriseSunsetServiceMock = new Mock<ISunriseSunsetService>();
         
@@ -28,6 +32,15 @@ public class SolarWatchControllerIntegrationTest
     
     private void ConfigureMockServices()
     {
+
+        _loggerMock.Setup(log => log.Log(
+            It.IsAny<LogLevel>(),
+            It.IsAny<EventId>(),
+            It.IsAny<object>(),
+            It.IsAny<Exception>(),
+            (Func<object, Exception, string>)It.IsAny<object>()));
+
+        
         _cityServiceMock.Setup(service => service.GetByName(It.IsAny<string>()))
             .Returns((string cityName) => new City
             {
@@ -41,8 +54,8 @@ public class SolarWatchControllerIntegrationTest
             {
                 CityName = cityName,
                 Date = date,
-                Sunrise = new TimeOnly(06, 00),
-                Sunset = new TimeOnly(18, 00)
+                Sunrise = new TimeOnly(06, 20),
+                Sunset = new TimeOnly(14, 54)
             });
     }
 
@@ -63,7 +76,7 @@ public class SolarWatchControllerIntegrationTest
         Assert.NotNull(data);
         Assert.Equal(cityName, data.City);
         Assert.Equal(date, data.Date);
-        Assert.Equal(new TimeOnly(06, 00), data.Sunrise);
-        Assert.Equal(new TimeOnly(18, 00), data.Sunset);
+        Assert.Equal(new TimeOnly(06, 20), data.Sunrise);
+        Assert.Equal(new TimeOnly(14, 54), data.Sunset);
     }
 }
