@@ -13,11 +13,11 @@ const postSignIn = (user) => {
             "Content-Type": "application/json"
         },
         body: JSON.stringify(user)
-    }).then(res => {
-        if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
+    }).then(resp => {
+        if (!resp.ok) {
+            throw new Error(`HTTP error! status: ${resp.status}`);
         }
-        return res.ok
+        return resp
     }).catch(err => {
         console.error('Error:', err);
     });
@@ -29,8 +29,8 @@ export default function SignIn() {
     const { login } = useProfile();
     
     const handleSignIn = (user) => {
-        postSignIn(user).then( res => {
-            if (!res)
+        postSignIn(user).then(resp => {
+            if (!resp.ok)
             {
                 navigate("/sign-in")                
             }
@@ -46,7 +46,6 @@ export default function SignIn() {
     
     return (
         <>
-            <Navbar/>
             <SignInForm {...props}/>
         </>
     );

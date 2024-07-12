@@ -1,20 +1,19 @@
 import './SolarWatchReqForm.scss';
 import React, {useState} from "react";
-import {Link} from "react-router-dom";
 
 export default function SolarWatchReqForm(props) {
     const {
-        solarWatch,
         onSave,
-        onCancel
     } = props;
 
-    const [cityName, setCityName] = useState("");
-    const [date, setDate] = useState(null);
+    const [reqSolarWatch, setReqSolarWatch] = useState({
+        cityName: "",
+        date: Date.now()
+    });
 
     const onSubmit = e => {
         e.preventDefault();
-        return onSave({...solarWatch, cityName: cityName, date: date});
+        return onSave(reqSolarWatch);
     }
 
     return (
@@ -22,9 +21,9 @@ export default function SolarWatchReqForm(props) {
             <div>
                 <label htmlFor="solar-watch-city" id="form1" type="text"/>
                 <input
-                    value={user.email}
-                    onChange={e => setCityName(e.target.value)}
-                    placeholder="Email"
+                    value={reqSolarWatch.cityName}
+                    onChange={e => setReqSolarWatch({...reqSolarWatch, cityName: e.target.value})}
+                    placeholder="city name"
                     type="text"
                     name="cityName"
                     id="solar-watch-city"
@@ -33,22 +32,16 @@ export default function SolarWatchReqForm(props) {
             <div>
                 <label htmlFor="solar-watch-date" id="form1" type="date"/>
                 <input
-                    value={user.password}
-                    onChange={e => setDate(e.target.value)}
-                    placeholder="Password"
+                    value={reqSolarWatch.date}
+                    onChange={e => setReqSolarWatch({...reqSolarWatch, date: e.target.value})}
+                    placeholder="date"
                     type="date"
                     name="date"
                     id="solar-watch-date"
                 />
             </div>
-            <div>
-                <Link to="/sign-up">
-                    <p>SignUp</p>
-                </Link>
-            </div>
 
-            <button type="submit">SignIn</button>
-            <button type="button" onClick={onCancel}>Cancel</button>
+            <button type="submit">Show</button>
 
         </form>
     );

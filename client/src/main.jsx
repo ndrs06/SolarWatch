@@ -10,18 +10,25 @@ import SolarWatch from "./pages/SolarWatch/SolarWatch.jsx"
 
 import {ProfileContextProvider} from "./contexts/ProfileContext.jsx";
 import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute.jsx";
+import Layout from "./pages/Layout/Layout.jsx";
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
       <ProfileContextProvider>
           <BrowserRouter>
               <Routes>
-                  <Route path='/' element={<Home/>}/>
-                  <Route path='/sign-in' element={<SignIn/>}/>
-                  <Route path='/sign-up' element={<SignUp/>}/>
-                  <Route element={<ProtectedRoute/>}>
-                    <Route path='/solar-watch' element={<SolarWatch/>}/>      
-                  </Route>
+                  <Route path='/' element={<Layout/>}>
+                          
+                      <Route path='/' element={<Home/>}/>
+                      <Route path='/sign-in' element={<SignIn/>}/>
+                      <Route path='/sign-up' element={<SignUp/>}/>
+                      
+                      <Route path='/solar-watch' element={<SolarWatch/>}/>     
+                      
+                      <Route element={<ProtectedRoute/>}>
+                      </Route>
+                      
+                  </Route>                  
               </Routes>
           </BrowserRouter>
       </ProfileContextProvider>

@@ -12,11 +12,11 @@ const postSignUp = (user) => {
             "Content-Type": "application/json"
         },
         body: JSON.stringify(user)
-    }).then(res => {
-        if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
+    }).then(resp => {
+        if (!resp.ok) {
+            throw new Error(`HTTP error! status: ${resp.status}`);
         }
-        return res.ok
+        return resp.ok
     }).catch(err => {
         console.error('Error:', err);
     });
@@ -26,7 +26,7 @@ export default function SignUp() {
     const navigate = useNavigate();
 
     const handleSignIn = (user) => {
-        postSignUp(user).then( res => res ? navigate("/solar-watch") : navigate("/sign-up"))
+        postSignUp(user).then( resp => resp ? navigate("/solar-watch") : navigate("/sign-up"))
     }
 
     const props = {
@@ -35,7 +35,6 @@ export default function SignUp() {
     }
     return (
         <>
-            <Navbar/>
             <SignUpForm {...props}/>
         </>
     );

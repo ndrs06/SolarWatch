@@ -1,18 +1,16 @@
 import './SolarWatch.scss';
-import React, {useEffect, useState} from 'react';
-import {useNavigate} from "react-router-dom";
+import React, {useState} from 'react';
 
-import Navbar from "../../components/Navbar/Navbar.jsx";
 import SolarWatchResult from "../../components/SolarWatchResult/SolarWatchResult.jsx"
 import SolarWatchReqForm from "../../components/SolarWatchReqForm/SolarWatchReqForm.jsx";
 
-const getSolarWatch = (cityName, date) => {
-    return fetch(`/api/SolarWatch/?cityName=${cityName}&date=${date}`)
-        .then(res => {
-        if (!res.ok) {
-            throw new Error(`HTTP error! status: ${res.status}`);
+const getSolarWatch = (reqSolarWatch) => {
+    return fetch(`/api/SolarWatch/?cityName=${reqSolarWatch.cityName}&date=${reqSolarWatch.date}`)
+        .then(resp => {
+        if (!resp.ok) {
+            throw new Error(`HTTP error! status: ${resp.status}`);
         }
-            return res.json();
+            return resp.json();
     })
         .catch(err => {
         console.error('Error:', err);
@@ -20,26 +18,25 @@ const getSolarWatch = (cityName, date) => {
 }
 
 export default function SolarWatch() {
-    const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
     const [authorised, setAuthorised] = useState(false)
     const [solarWatch, setSolarWatch] = useState(null);
-
-    useEffect(() => {
-        getSolarWatch()
-            .then(solarWatch => setSolarWatch(solarWatch))
-    }, []);
+    
+    const handleSolarWatch = reqSolarWatch => {
+        getSolarWatch(reqSolarWatch).then(data => setSolarWatch(data))
+    }
 
     const props = {
-        solarWatch
+        solarWatch,
+        setSolarWatch,
+        onSave: handleSolarWatch
     }
 
     return (
         <>
             <h1>SOLAR-WATCH</h1>
-            <Navbar/>
             <SolarWatchReqForm {...props}/>
-            <SolarWatchResult {...props}/>
+            { solarWatch != null ? <SolarWatchResult {...props}/> : <></> }
         </>
     );
 }
