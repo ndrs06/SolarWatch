@@ -8,7 +8,7 @@ namespace SolarWatchAPIIntegrationTest;
 
 public class SolarWatchWebApplicationFactory : WebApplicationFactory<Program>
 {
-    /*private readonly string _dbSolarWatch = Guid.NewGuid().ToString();
+    private readonly string _dbSolarWatch = Guid.NewGuid().ToString();
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
@@ -33,5 +33,5 @@ public class SolarWatchWebApplicationFactory : WebApplicationFactory<Program>
             solarContext.Database.EnsureDeleted();
             solarContext.Database.EnsureCreated();
         });
-    }*/
+    }
 }
