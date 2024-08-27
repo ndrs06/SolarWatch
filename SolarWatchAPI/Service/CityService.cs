@@ -21,6 +21,11 @@ public class CityService : ICityService
         _openWeatherMapApiDataProvider = openWeatherMapApiDataProvider;
     }
 
+    public IEnumerable<City> GetAll()
+    {
+        return _cityRepository.GetAll();
+    }
+
     public City? GetByName(string? cityName)
     {
         return _cityRepository.GetByName(cityName);

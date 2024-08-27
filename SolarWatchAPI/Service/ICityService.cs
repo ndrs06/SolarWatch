@@ -5,6 +5,7 @@ namespace SolarWatchAPI.Service;
 
 public interface ICityService
 {
+    IEnumerable<City> GetAll();
     City? GetByName(string cityName);
     void AddCityToDb(City city);
     void DeleteCityFromDb(City city);
