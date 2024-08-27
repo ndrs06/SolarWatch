@@ -7,7 +7,7 @@ using SolarWatchAPI.Service;
 namespace SolarWatchAPI.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/admin")]
 public class AdminController : ControllerBase
 {
     private readonly ILogger<AdminController> _logger;
@@ -21,7 +21,22 @@ public class AdminController : ControllerBase
         _sunriseSunsetService = sunriseSunsetService;
     }
     
-    [HttpPost("addNewCityToDb"), Authorize(Roles="Admin")]
+    [HttpGet("cities")]
+    public async Task<ActionResult<string>> GetAllCities()
+    {
+        try
+        {
+            var cities = _cityService.GetAll();
+            return Ok(cities);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return BadRequest(e.Message);
+        }
+    }
+    
+    [HttpPost("cities"), Authorize(Roles="Admin")]
     public async Task<ActionResult<string>> PostCityToDb(string cityName)
     {
         try
@@ -46,7 +61,7 @@ public class AdminController : ControllerBase
         }
     }
     
-    [HttpDelete("deleteCityFromDb"), Authorize(Roles="Admin")]
+    [HttpDelete("cities"), Authorize(Roles="Admin")]
     public ActionResult<string> DeleteCityFromDb(string cityName)
     {
         try
@@ -69,7 +84,7 @@ public class AdminController : ControllerBase
         }
     }
     
-    [HttpPut("addNewCityToDb/{cityName}"), Authorize(Roles="Admin")]
+    [HttpPut("cities/{cityName}"), Authorize(Roles="Admin")]
     public ActionResult<string> UpdateCityInDb(string cityName, [FromBody] CityRequest request)
     {
         try
