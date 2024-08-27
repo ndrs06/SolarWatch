@@ -3,6 +3,10 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 
+import Admin from './pages/Admin/Admin.jsx';
+import AdminUsers from "./components/Admin_Components/admin_Users.jsx";
+import AdminCities from "./components/Admin_Components/admi_Cities.jsx";
+
 import Home from "./pages/Home/Home.jsx";
 import SignIn from "./pages/SignIn/SignIn.jsx";
 import SignUp from "./pages/SignUp/SignUp.jsx";
@@ -17,6 +21,15 @@ ReactDOM.createRoot(document.getElementById('root')).render(
       <ProfileContextProvider>
           <BrowserRouter>
               <Routes>
+                  
+                  <Route path='/admin' element={<Admin/>}>                      
+                      <Route path='/admin/users' element={<AdminUsers/>}/>
+                      <Route path='/admin/cities' element={<AdminCities/>}/>
+                  </Route>
+                  
+
+                  
+                  
                   <Route path='/' element={<Layout/>}>
                           
                       <Route path='/' element={<Home/>}/>
