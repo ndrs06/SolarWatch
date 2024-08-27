@@ -5,7 +5,7 @@ using SolarWatchAPI.Service;
 namespace SolarWatchAPI.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/solar-watch")]
 public class SolarWatchController : ControllerBase
 {
     private readonly ILogger<SolarWatchController> _logger;
@@ -19,7 +19,7 @@ public class SolarWatchController : ControllerBase
         _sunriseSunsetService = sunriseSunsetService;
     }
     
-    [HttpGet(Name = "SolarWatch/{cityName}/{date}")]
+    [HttpGet(Name = "solar-watch")]
     public async Task<ActionResult<SolarWatch>> GetSolarWatch(string cityName, DateTime date)
     {
         try
