@@ -1,6 +1,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SolarWatchAPI.Data;
@@ -66,7 +67,10 @@ builder.Services.AddSwaggerGen(option =>
 #endregion
 
 #region Add DB Context
-builder.Services.AddDbContext<SolarWatchApiContext>();
+builder.Services.AddDbContext<SolarWatchApiContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MSSQL_CONNECTION"));
+});
 #endregion
 
 #region Add Authentication
