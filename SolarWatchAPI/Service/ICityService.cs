@@ -8,7 +8,7 @@ public interface ICityService
     IEnumerable<City> GetAll();
     City? GetByName(string cityName);
     void AddCityToDb(City city);
-    void DeleteCityFromDb(City city);
+    void DeleteCityFromDb(string cityName);
     void UpdateCityInDb(City city);
     Task<string> GetOpenWeatherMapApiDataAsync(string cityName);
     Coordinates ProcessCityCoordinates(string jsonData);

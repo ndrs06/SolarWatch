@@ -36,9 +36,17 @@ public class CityService : ICityService
         _cityRepository.Add(city);
     }
 
-    public void DeleteCityFromDb(City city)
+    public void DeleteCityFromDb(string cityName)
     {
+        var city = _cityRepository.GetByName(cityName);
+        
+        if (city == null)
+        {
+            throw new Exception("City not found");
+        }
+        
         _cityRepository.Delete(city);
+        
     }
 
     public void UpdateCityInDb(City city)
