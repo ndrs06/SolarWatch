@@ -4,8 +4,9 @@ import ReactDOM from 'react-dom/client'
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 
 import Admin from './pages/Admin/Admin.jsx';
-import AdminUsers from "./components/Admin_Components/admin_Users.jsx";
-import AdminCities from "./components/Admin_Components/admi_Cities.jsx";
+import AdminUsers from "./pages/Admin/admin_Users.jsx";
+import AdminCities from "./pages/Admin/admi_Cities.jsx"
+import AdminSunriseSunsets from "./pages/Admin/admin_SunriseSunsets.jsx";
 
 import Home from "./pages/Home/Home.jsx";
 import SignIn from "./pages/SignIn/SignIn.jsx";
@@ -25,6 +26,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <Route path='/admin' element={<Admin/>}>                      
                       <Route path='/admin/users' element={<AdminUsers/>}/>
                       <Route path='/admin/cities' element={<AdminCities/>}/>
+                      <Route path='/admin/cities/:cityName' element={<AdminSunriseSunsets/>}/>
                   </Route>
                   
 
