@@ -22,7 +22,7 @@ public class AdminController : ControllerBase
     }
     
     [HttpGet("cities")]
-    public async Task<ActionResult<string>> GetAllCities()
+    public ActionResult<IEnumerable<City>> GetAllCities()
     {
         try
         {
@@ -36,7 +36,22 @@ public class AdminController : ControllerBase
         }
     }
     
-    [HttpPost("cities"), Authorize(Roles="Admin")]
+    [HttpGet("cities/{cityName}")]
+    public ActionResult<City> GetCityByName(string cityName)
+    {
+        try
+        {
+            var city = _cityService.GetByName(cityName);
+            return Ok(city);
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return BadRequest(e.Message);
+        }
+    }
+    
+    [HttpPost("cities")]
     public async Task<ActionResult<string>> PostCityToDb(string cityName)
     {
         try
@@ -61,21 +76,13 @@ public class AdminController : ControllerBase
         }
     }
     
-    [HttpDelete("cities"), Authorize(Roles="Admin")]
+    [HttpDelete("cities")]
     public ActionResult<string> DeleteCityFromDb(string cityName)
     {
         try
         {
-            var city = _cityService.GetByName(cityName);
-
-            if (city != null)
-            {
-                _cityService.DeleteCityFromDb(city);
-
-                return Ok($"{cityName} deleted from DB");
-            }
-
-            return NotFound($"{cityName} does not exist in DB");
+            _cityService.DeleteCityFromDb(cityName);
+            return Ok($"{cityName} deleted from DB");
         }
         catch (Exception e)
         {
@@ -84,7 +91,7 @@ public class AdminController : ControllerBase
         }
     }
     
-    [HttpPut("cities/{cityName}"), Authorize(Roles="Admin")]
+    [HttpPut("cities/{cityName}")]
     public ActionResult<string> UpdateCityInDb(string cityName, [FromBody] CityRequest request)
     {
         try
