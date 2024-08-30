@@ -20,14 +20,14 @@ public class AdminController : ControllerBase
         _cityService = cityService;
         _sunriseSunsetService = sunriseSunsetService;
     }
-    
+
+    #region Cities
     [HttpGet("cities")]
     public ActionResult<IEnumerable<City>> GetAllCities()
     {
         try
         {
-            var cities = _cityService.GetAll();
-            return Ok(cities);
+            return Ok(_cityService.GetAll());
         }
         catch (Exception e)
         {
@@ -41,8 +41,7 @@ public class AdminController : ControllerBase
     {
         try
         {
-            var city = _cityService.GetByName(cityName);
-            return Ok(city);
+            return Ok(_cityService.GetByName(cityName));
         }
         catch (Exception e)
         {
@@ -56,18 +55,8 @@ public class AdminController : ControllerBase
     {
         try
         {
-            var city = _cityService.GetByName(cityName);
-
-            if (city == null)
-            {
-                var jsonData = await _cityService.GetOpenWeatherMapApiDataAsync(cityName);
-                var newCity = _cityService.ProcessCity(jsonData);
-                _cityService.AddCityToDb(newCity);
-
-                return Ok($"{cityName} added to DB");
-            }
-
-            return BadRequest($"{cityName} already exist in DB");
+            _cityService.AddCityToDb(cityName);
+            return Ok($"City {cityName} was successfully added.");
         }
         catch (Exception e)
         {
@@ -96,24 +85,8 @@ public class AdminController : ControllerBase
     {
         try
         {
-            var city = _cityService.GetByName(cityName);
-
-            if (city != null)
-            {
-                var updatedCity = new City
-                {
-                    Name = cityName,
-                    Lat = (int)request.Lat == 0 ? city.Lat : request.Lon,
-                    Lon = (int)request.Lon == 0 ? city.Lon : request.Lon,
-                    State = request.State == "string" ? city.State : request.State,
-                    Country = request.Country == "string" ? city.Country : request.Country
-                };
-                _cityService.UpdateCityInDb(updatedCity);
-
-                return Ok($"{cityName} updated in DB");
-            }
-
-            return NotFound($"{cityName} does not exist in DB");
+            _cityService.UpdateCityInDb(cityName, request);
+            return Ok($"{cityName} updated in DB");
         }
         catch (Exception e)
         {
@@ -121,4 +94,5 @@ public class AdminController : ControllerBase
             return BadRequest(e.Message);
         }
     }
+    #endregion
 }
