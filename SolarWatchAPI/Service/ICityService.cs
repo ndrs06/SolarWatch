@@ -1,5 +1,5 @@
-using SolarWatchAPI.Model;
 using SolarWatchAPI.Model.DataModels;
+using SolarWatchAPI.Model.RequestModels;
 
 namespace SolarWatchAPI.Service;
 
@@ -7,10 +7,7 @@ public interface ICityService
 {
     IEnumerable<City> GetAll();
     City? GetByName(string cityName);
-    void AddCityToDb(City city);
+    void AddCityToDb(string cityName);
     void DeleteCityFromDb(string cityName);
-    void UpdateCityInDb(City city);
-    Task<string> GetOpenWeatherMapApiDataAsync(string cityName);
-    Coordinates ProcessCityCoordinates(string jsonData);
-    City ProcessCity(string jsonData);
+    void UpdateCityInDb(string cityName, CityRequest request);
 }

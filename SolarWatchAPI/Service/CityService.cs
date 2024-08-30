@@ -1,5 +1,5 @@
-using SolarWatchAPI.Model;
 using SolarWatchAPI.Model.DataModels;
+using SolarWatchAPI.Model.RequestModels;
 using SolarWatchAPI.Service.DataProviders;
 using SolarWatchAPI.Service.JsonProcessors;
 using SolarWatchAPI.Service.Repository;
@@ -31,9 +31,18 @@ public class CityService : ICityService
         return _cityRepository.GetByName(cityName);
     }
 
-    public void AddCityToDb(City city)
+    public async void AddCityToDb(string cityName)
     {
-        _cityRepository.Add(city);
+        var city = _cityRepository.GetByName(cityName);
+
+        if (city != null)
+        {
+            throw new Exception($"City {cityName} already exists");
+        }
+        
+        var jsonData = await _openWeatherMapApiDataProvider.GetAsync(cityName);
+        var newCity = _jsonProcessor.ProcessCity(jsonData);
+        _cityRepository.Add(newCity);
     }
 
     public void DeleteCityFromDb(string cityName)
@@ -46,26 +55,22 @@ public class CityService : ICityService
         }
         
         _cityRepository.Delete(city);
+    }
+
+    public void UpdateCityInDb(string cityName, CityRequest request)
+    {
+        var city = _cityRepository.GetByName(cityName);
         
-    }
-
-    public void UpdateCityInDb(City city)
-    {
+        if (city == null)
+        {
+            throw new Exception("City not found");
+        }
+        
+        city.Country = request.Country;
+        city.State = request.State;
+        city.Lon = request.Lon;
+        city.Lat = request.Lat;
+        
         _cityRepository.Update(city);
-    }
-
-    public async Task<string> GetOpenWeatherMapApiDataAsync(string cityName)
-    {
-        return await _openWeatherMapApiDataProvider.GetAsync(cityName);
-    }
-
-    public Coordinates ProcessCityCoordinates(string jsonData)
-    {
-        return _jsonProcessor.ProcessCoordinates(jsonData);
-    }
-
-    public City ProcessCity(string jsonData)
-    {
-        return _jsonProcessor.ProcessCity(jsonData);
     }
 }
