@@ -50,24 +50,12 @@ public class SolarWatchController : ControllerBase
                 else
                 {
                     _logger.LogInformation($"DB does not contain city with this name: {cityName}");
-                    string openWeatherData;
-                    try
-                    {
-                        openWeatherData = await _cityService.GetOpenWeatherMapApiDataAsync(cityName);
-                        coordinates = _cityService.ProcessCityCoordinates(openWeatherData);
                     
-                        _logger.LogInformation("Coordinates data fetched from external API");
-                    }
-                    catch (Exception e)
-                    {
-                        _logger.LogError(e, e.Message);
-                        return BadRequest("");
-                    }
-
                     try
                     {
-                        var newCity = _cityService.ProcessCity(openWeatherData);
-                        _cityService.AddCityToDb(newCity);
+                        _cityService.AddCityToDb(cityName);
+                        var newCity = _cityService.GetByName(cityName);
+                        coordinates = new Coordinates { Lat = newCity.Lat, Lon = newCity.Lon };
                         _logger.LogInformation($"City: {cityName} added to DB");
                     }
                     catch (Exception e)
