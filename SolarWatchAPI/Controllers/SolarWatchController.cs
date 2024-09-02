@@ -67,29 +67,12 @@ public class SolarWatchController : ControllerBase
                         _logger.LogError("Failed to retrieve city {CityName} after adding to DB", cityName);
                         return BadRequest($"City {cityName} could not be retrieved after adding to DB.");
                 }
-                    
-                coordinates = new Coordinates { Lat = dbCity.Lat, Lon = dbCity.Lon };
                 _logger.LogInformation($"City: {cityName} added to DB");
-                    
-            }
-
-            string sunriseSunsetData;
-            try
-            {
-                sunriseSunsetData = await _sunriseSunsetService.GetSunriseSunsetApiDataAsync(date, coordinates);
-                _logger.LogInformation("SunriseSunset data fetched from external API");
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, e.Message);
-                return NotFound($"Not found sunriseSunset with these coordinates: {coordinates.Lat}, {coordinates.Lon}, date: {date}");
             }
             
             try
             {
-                var newSunriseSunset = _sunriseSunsetService.ProcessSunriseSunset(sunriseSunsetData);
-                newSunriseSunset.CityName = cityName;
-                _sunriseSunsetService.AddSunriseSunsetToDb(cityName, date);
+                await _sunriseSunsetService.AddSunriseSunsetToDb(cityName, date);
                 _logger.LogInformation($"SunriseSunset with date: {date} added to {cityName} in DB");
             }
             catch (Exception e)
@@ -98,9 +81,14 @@ public class SolarWatchController : ControllerBase
                 return BadRequest($"Failed to add sunrise/sunset data to DB: {e.Message}");
             }
             
-            var solarWatch = _sunriseSunsetService.ProcessSolarWatch(sunriseSunsetData);
-            solarWatch.City = cityName;
-            return Ok(solarWatch);
+            dbSunriseSunset = _sunriseSunsetService.GetByCityNameAndDate(cityName, date);
+            return Ok(new SolarWatch
+            {
+                City = dbSunriseSunset.CityName,
+                Date = dbSunriseSunset.Date,
+                Sunrise = dbSunriseSunset.Sunrise,
+                Sunset = dbSunriseSunset.Sunset
+            });
             
         }
         catch (Exception e)
