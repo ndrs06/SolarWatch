@@ -5,7 +5,7 @@ import {BrowserRouter, Route, Routes} from "react-router-dom";
 
 import Admin from './pages/Admin/Admin.jsx';
 import AdminUsers from "./pages/Admin/admin_Users.jsx";
-import AdminCities from "./pages/Admin/admi_Cities.jsx"
+import AdminCities from "./pages/Admin/admin_Cities.jsx"
 import AdminSunriseSunsets from "./pages/Admin/admin_SunriseSunsets.jsx";
 
 import Home from "./pages/Home/Home.jsx";
