@@ -38,37 +38,39 @@ public class SolarWatchController : ControllerBase
             }
 
             Coordinates coordinates;
-            try
-            {
-                var dbCity = _cityService.GetByName(cityName);
+         
+            var dbCity = _cityService.GetByName(cityName);
 
-                if (dbCity != null)
-                {
+            if (dbCity != null)
+            {
                     coordinates = new Coordinates { Lat = dbCity.Lat, Lon = dbCity.Lon };
                     _logger.LogInformation("Coordinates set from DB");
-                }
-                else
-                {
-                    _logger.LogInformation($"DB does not contain city with this name: {cityName}");
-                    
-                    try
-                    {
-                        _cityService.AddCityToDb(cityName);
-                        var newCity = _cityService.GetByName(cityName);
-                        coordinates = new Coordinates { Lat = newCity.Lat, Lon = newCity.Lon };
-                        _logger.LogInformation($"City: {cityName} added to DB");
-                    }
-                    catch (Exception e)
-                    {
-                        _logger.LogError(e, e.Message);
-                        return BadRequest($"Failed to add city {cityName} to DB: {e.Message}");
-                    }
-                }
             }
-            catch (Exception e)
+            else
             {
-                Console.WriteLine(e);
-                throw;
+                _logger.LogInformation($"DB does not contain city with this name: {cityName}");
+
+                try
+                {
+                        await _cityService.AddCityToDb(cityName);
+                        _logger.LogInformation("City {CityName} added to DB", cityName);
+                }
+                catch (Exception e)
+                {
+                        Console.WriteLine(e);
+                        return StatusCode(500, $"Failed to add city to the database: {e.Message}");
+                }
+                    
+                dbCity = _cityService.GetByName(cityName);
+                if (dbCity == null)
+                {
+                        _logger.LogError("Failed to retrieve city {CityName} after adding to DB", cityName);
+                        return BadRequest($"City {cityName} could not be retrieved after adding to DB.");
+                }
+                    
+                coordinates = new Coordinates { Lat = dbCity.Lat, Lon = dbCity.Lon };
+                _logger.LogInformation($"City: {cityName} added to DB");
+                    
             }
 
             string sunriseSunsetData;
@@ -87,7 +89,7 @@ public class SolarWatchController : ControllerBase
             {
                 var newSunriseSunset = _sunriseSunsetService.ProcessSunriseSunset(sunriseSunsetData);
                 newSunriseSunset.CityName = cityName;
-                _sunriseSunsetService.AddSunriseSunsetToDb(newSunriseSunset);
+                _sunriseSunsetService.AddSunriseSunsetToDb(cityName, date);
                 _logger.LogInformation($"SunriseSunset with date: {date} added to {cityName} in DB");
             }
             catch (Exception e)

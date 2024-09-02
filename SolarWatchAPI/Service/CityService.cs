@@ -26,12 +26,12 @@ public class CityService : ICityService
         return _cityRepository.GetAll();
     }
 
-    public City? GetByName(string? cityName)
+    public City? GetByName(string cityName)
     {
         return _cityRepository.GetByName(cityName);
     }
 
-    public async void AddCityToDb(string cityName)
+    public async Task AddCityToDb(string cityName)
     {
         var city = _cityRepository.GetByName(cityName);
 
@@ -41,8 +41,8 @@ public class CityService : ICityService
         }
         
         var jsonData = await _openWeatherMapApiDataProvider.GetAsync(cityName);
-        var newCity = _jsonProcessor.ProcessCity(jsonData);
-        _cityRepository.Add(newCity);
+        city = _jsonProcessor.ProcessCity(jsonData);
+        _cityRepository.Add(city);
     }
 
     public void DeleteCityFromDb(string cityName)
