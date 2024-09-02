@@ -2,9 +2,16 @@ import React, {useEffect, useState} from "react";
 import Loading from "../../components/Loading/Loading.jsx"
 import {Link, useNavigate} from "react-router-dom";
 
-const fetchCities = () => fetch(
+const getCities = () => fetch(
     "/api/admin/cities")
-    .then(res => res.json());
+    .then(res => res.json())
+    .catch(err => console.log(err));
+
+const postCity = (cityName) => fetch(
+    `/api/admin/cities?cityName=${cityName}`, {
+        method: "POST"
+    }).then(res => res.json())
+    .catch(err => console.log(err));
 
 const deleteCity = (cityName) => fetch(
     `/api/admin/cities?cityName=${cityName}`, {
@@ -13,7 +20,8 @@ const deleteCity = (cityName) => fetch(
             "Content-Type": "application/json"
         }       
     })
-    .then(res => res.json());
+    .then(res => res.json())
+    .catch(err => console.log(err));
 
 
 export default function AdminCities() {
@@ -21,16 +29,19 @@ export default function AdminCities() {
     const [loading, setLoading] = useState(true);
     const [cities, setCities] = useState(null);
     const [editCity, setEditCity] = useState({});
+    const [cityName, setCityName] = useState("");
+    const [plusSwitch, setPlusSwitch] = useState(false);
+    
 
 
 
     useEffect(() => {
-        fetchCities().then(data => {
-            setLoading(false);            
-            setCities(data)
-            console.log(data)
-            return data
-        }).then(data => data.map(city => setEditCity({...editCity, [city.name]: false})));        
+        getCities()
+            .then(data => {
+            setLoading(false);
+            setEditCity(data.map(city => editCity[city.name] = false));
+            setCities(data);
+            })
     },[]);
     
     const handleDelete = cityName => {
@@ -40,7 +51,11 @@ export default function AdminCities() {
     
     const handleEdit = cityName => {
         setEditCity({...editCity, [cityName]: !editCity[cityName]});
-        console.log(editCity);
+    }
+    
+    const handlePost = cityName => {
+        postCity(cityName);
+        getCities().then(data => setCities(data))
     }
     
     const props = {
@@ -60,12 +75,19 @@ export default function AdminCities() {
                     <th>Lon.</th>
                     <th></th>
                     <th></th>
-                    <th><button>+</button></th>
+                    <th><button onClick={() => setPlusSwitch(!plusSwitch)}>+</button></th>
                 </tr>
+                {plusSwitch && 
+                <tr>
+                    <th><input onChange={e => setCityName(e.target.value)}></input></th>
+                    <th><button onClick={() => handlePost(cityName)}>Add</button></th>
+                </tr>
+                }
                 </thead>
+                
                 <tbody>
                 {cities.map(city => (
-                    !editCity.cityName ? (
+                    !editCity[city.name] ? (
                         <tr key={city.name}>
                             <td>{city.name}</td>
                             <td>{city.state}</td>
@@ -73,10 +95,10 @@ export default function AdminCities() {
                             <td>{city.lat}</td>
                             <td>{city.lon}</td>
                             <td>
-                                <button onClick={e => navigate(`/admin/cities/${city.name}`)}>details</button>
+                                <button onClick={() => navigate(`/admin/cities/${city.name}`)}>details</button>
                             </td>
                             <td>
-                                <button onClick={e => handleEdit(city.name)}>edit</button>
+                                <button onClick={() => handleEdit(city.name)}>edit</button>
                             </td>
                             <td>
                                 <button onClick={() => handleDelete(city.name)}>delete</button>
@@ -126,12 +148,10 @@ export default function AdminCities() {
                                 />
                             </td>
                             <td>
-                                <Link to="/admin/cities/:name">
-                                    <button>details</button>
-                                </Link>
+                                <button onClick={() => navigate(`/admin/cities/${city.name}`)}>details</button>
                             </td>
                             <td>
-                                <button onClick={e => handleEdit(city.name)}>edit</button>
+                            <button onClick={() => handleEdit(city.name)}>edit</button>
                             </td>
                             <td>
                                 <button onClick={() => handleDelete(city.name)}>delete</button>
@@ -144,3 +164,61 @@ export default function AdminCities() {
         )
     )
 }
+
+/*
+function CityEditRow() {
+    return (
+        <tr key={city.name}>
+            <td>{city.name}</td>
+            <td>
+                <input
+                    value={city.country}
+                    onChange={e => ({...city, country: e.target.value})}
+                    placeholder="Country"
+                    type="text"
+                    name="country"
+                    id="city-country"
+                />
+            </td>
+            <td>
+                <input
+                    value={city.state}
+                    onChange={e => ({...city, state: e.target.value})}
+                    placeholder="State"
+                    type="text"
+                    name="state"
+                    id="city-state"
+                />
+            </td>
+            <td>
+                <input
+                    value={city.lat}
+                    onChange={e => ({...city, lat: e.target.value})}
+                    placeholder="Lat"
+                    type="text"
+                    name="lat"
+                    id="city-lat"
+                />
+            </td>
+            <td>
+                <input
+                    value={city.lon}
+                    onChange={e => ({...city, lon: e.target.value})}
+                    placeholder="Lon"
+                    type="text"
+                    name="lon"
+                    id="coty-lon"
+                />
+            </td>
+            <td>
+                <button onClick={() => navigate(`/admin/cities/${city.name}`)}>details</button>
+            </td>
+            <td>
+                <button onClick={() => handleEdit(city.name)}>edit</button>
+            </td>
+            <td>
+                <button onClick={() => handleDelete(city.name)}>delete</button>
+            </td>
+        </tr>
+    )
+}*/
