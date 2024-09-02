@@ -55,7 +55,7 @@ public class AdminController : ControllerBase
     {
         try
         {
-            _cityService.AddCityToDb(cityName);
+            await _cityService.AddCityToDb(cityName);
             return Ok($"City {cityName} was successfully added.");
         }
         catch (Exception e)
@@ -80,7 +80,7 @@ public class AdminController : ControllerBase
         }
     }
     
-    [HttpPut("cities/{cityName}")]
+    [HttpPatch("cities/{cityName}")]
     public ActionResult<string> UpdateCityInDb(string cityName, [FromBody] CityRequest request)
     {
         try
@@ -94,5 +94,38 @@ public class AdminController : ControllerBase
             return BadRequest(e.Message);
         }
     }
+    #endregion
+
+    #region SunriseSunsets
+
+    [HttpPost("sunrise-sunsets")]
+    public async Task<ActionResult<string>> PostSunriseSunsetToDb(string cityName, DateTime date)
+    {
+        try
+        {
+            return Ok($"City {cityName} was successfully added.");
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return BadRequest(e.Message);
+        }
+    }
+    
+    [HttpDelete("sunrise-sunsets")]
+    public ActionResult<string> DeleteSunriseSunsetFromDb(string cityName)
+    {
+        try
+        {
+            _cityService.DeleteCityFromDb(cityName);
+            return Ok($"{cityName} deleted from DB");
+        }
+        catch (Exception e)
+        {
+            _logger.LogError(e, e.Message);
+            return BadRequest(e.Message);
+        }
+    }
+
     #endregion
 }
