@@ -37,6 +37,10 @@ public class SunriseSunsetService : ISunriseSunsetService
         }
         
         var city = _cityRepository.GetByName(cityName);
+        if (city == null)
+        {
+            throw new Exception($"City not found: {cityName}");
+        }
         var coordinates = new Coordinates {Lat = city.Lat, Lon = city.Lon};
         var jsonData = await _sunriseSunsetApiDataProvider.GetAsync(date, coordinates);
         sunriseSunset = _jsonProcessor.ProcessSunriseSunset(jsonData);
