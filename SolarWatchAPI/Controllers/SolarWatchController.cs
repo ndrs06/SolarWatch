@@ -37,14 +37,10 @@ public class SolarWatchController : ControllerBase
                 });
             }
 
-            Coordinates coordinates;
-         
             var dbCity = _cityService.GetByName(cityName);
-
             if (dbCity != null)
             {
-                    coordinates = new Coordinates { Lat = dbCity.Lat, Lon = dbCity.Lon };
-                    _logger.LogInformation("Coordinates set from DB");
+                _logger.LogInformation("Coordinates set from DB");
             }
             else
             {
@@ -52,20 +48,20 @@ public class SolarWatchController : ControllerBase
 
                 try
                 {
-                        await _cityService.AddCityToDb(cityName);
-                        _logger.LogInformation("City {CityName} added to DB", cityName);
+                    await _cityService.AddCityToDb(cityName);
+                    _logger.LogInformation("City {CityName} added to DB", cityName);
                 }
                 catch (Exception e)
                 {
-                        Console.WriteLine(e);
-                        return StatusCode(500, $"Failed to add city to the database: {e.Message}");
+                    Console.WriteLine(e);
+                    return StatusCode(500, $"Failed to add city to the database: {e.Message}");
                 }
                     
                 dbCity = _cityService.GetByName(cityName);
                 if (dbCity == null)
                 {
-                        _logger.LogError("Failed to retrieve city {CityName} after adding to DB", cityName);
-                        return BadRequest($"City {cityName} could not be retrieved after adding to DB.");
+                    _logger.LogError($"Failed to retrieve city {cityName} after adding to DB");
+                    return BadRequest($"City {cityName} could not be retrieved after adding to DB.");
                 }
                 _logger.LogInformation($"City: {cityName} added to DB");
             }
@@ -82,6 +78,7 @@ public class SolarWatchController : ControllerBase
             }
             
             dbSunriseSunset = _sunriseSunsetService.GetByCityNameAndDate(cityName, date);
+            
             return Ok(new SolarWatch
             {
                 City = dbSunriseSunset.CityName,
