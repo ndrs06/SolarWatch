@@ -23,8 +23,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
           <BrowserRouter>
               <Routes>
                   
-                  <Route path='/admin' element={<Admin/>}>                      
-                      <Route path='/admin/users' element={<AdminUsers/>}/>
+                  <Route path='/admin' element={<Admin/>}>
                       <Route path='/admin/cities' element={<AdminCities/>}/>
                       <Route path='/admin/cities/:cityName' element={<AdminSunriseSunsets/>}/>
                   </Route>
