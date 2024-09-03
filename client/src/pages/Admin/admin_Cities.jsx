@@ -23,7 +23,6 @@ const deleteCity = (cityName) => fetch(
     .then(res => res.json())
     .catch(err => console.log(err));
 
-
 export default function AdminCities() {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
@@ -31,9 +30,6 @@ export default function AdminCities() {
     const [editCity, setEditCity] = useState({});
     const [cityName, setCityName] = useState("");
     const [plusSwitch, setPlusSwitch] = useState(false);
-    
-
-
 
     useEffect(() => {
         getCities()
@@ -164,61 +160,3 @@ export default function AdminCities() {
         )
     )
 }
-
-/*
-function CityEditRow() {
-    return (
-        <tr key={city.name}>
-            <td>{city.name}</td>
-            <td>
-                <input
-                    value={city.country}
-                    onChange={e => ({...city, country: e.target.value})}
-                    placeholder="Country"
-                    type="text"
-                    name="country"
-                    id="city-country"
-                />
-            </td>
-            <td>
-                <input
-                    value={city.state}
-                    onChange={e => ({...city, state: e.target.value})}
-                    placeholder="State"
-                    type="text"
-                    name="state"
-                    id="city-state"
-                />
-            </td>
-            <td>
-                <input
-                    value={city.lat}
-                    onChange={e => ({...city, lat: e.target.value})}
-                    placeholder="Lat"
-                    type="text"
-                    name="lat"
-                    id="city-lat"
-                />
-            </td>
-            <td>
-                <input
-                    value={city.lon}
-                    onChange={e => ({...city, lon: e.target.value})}
-                    placeholder="Lon"
-                    type="text"
-                    name="lon"
-                    id="coty-lon"
-                />
-            </td>
-            <td>
-                <button onClick={() => navigate(`/admin/cities/${city.name}`)}>details</button>
-            </td>
-            <td>
-                <button onClick={() => handleEdit(city.name)}>edit</button>
-            </td>
-            <td>
-                <button onClick={() => handleDelete(city.name)}>delete</button>
-            </td>
-        </tr>
-    )
-}*/
