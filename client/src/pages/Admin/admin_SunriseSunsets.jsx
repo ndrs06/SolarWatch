@@ -7,18 +7,23 @@ const getCity = (cityName) => fetch(`/api/admin/cities/${cityName}`)
     .then(res => res.json())
     .catch(err => console.log(err));
 
+const postSunriseSunset = (cityName, date) => fetch(
+    `/api/admin/sunrise-sunsets?cityName=${cityName}&date=${date}`, {
+        method: "POST"
+    }).then(res => res.json())
+    .catch(err => console.log(err));
+
+const deleteSunriseSunset = (cityName, date) => fetch(
+    `/api/admin/sunrise-sunsets?cityName=${cityName}&date=${date}`, {
+        method: "DELETE"
+    }).catch(err => console.log(err));
+
 export default function AdminSunriseSunsets() {
     const [loading, setLoading] = useState(true);
+    const [plusSwitch, setPlusSwitch] = useState(false);
+    const [date, setDate] = useState(null);
     const { cityName } = useParams();
-    
     const [city, setCity] = useState(null);
-/*    const [city, setCity] = useState({
-        name: "",
-        state: "",
-        country: "",
-        lat: "",
-        lon: ""
-    });*/
     
     useEffect(_ => {
         getCity(cityName).then(data => {
@@ -27,6 +32,17 @@ export default function AdminSunriseSunsets() {
         })
     }, [cityName]);
 
+    const handlePost = (cityName, date) => {
+        postSunriseSunset(cityName, date)
+            .then(_ => getCity(cityName))
+            .then(data => setCity(data))
+    }
+    
+    const handleDelete = (cityName, date) => {
+        deleteSunriseSunset(cityName, date)
+            .then(_ => getCity(cityName))
+            .then(data => setCity(data));
+    }
     
     return (
         loading ? (
@@ -35,93 +51,43 @@ export default function AdminSunriseSunsets() {
             <table className="table">
                 <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>State</th>
-                    <th>Country</th>
-                    <th>Lat.</th>
-                    <th>Lon.</th>
-                    <th></th>
-                    <th></th>
-                    <th>
-                        <button>+</button>
-                    </th>
+                    <th>{city.name}</th>
+                    <th>Date</th>
+                    <th>Sunrise</th>
+                    <th>Sunset</th>
+                    {!plusSwitch ? (
+                        <>
+                            <th></th>
+                            <th><button onClick={() => setPlusSwitch(!plusSwitch)}>+</button></th>
+                        </>
+                    ) : (
+                        <>
+                            <th>
+                                <input type="date" onChange={e => setDate(e.target.value)}/>
+                            </th>
+                            <th>
+                                <button onClick={() => {
+                                    handlePost(cityName, date)
+                                    setPlusSwitch(!plusSwitch)}}>Add</button>
+                            </th>
+                        </>
+                    )}
                 </tr>
                 </thead>
                 <tbody>
-                {city.sunriseSunsets.map(city => (
-                    !editCity.cityName ? (
-                        <tr key={city.name}>
-                            <td>{city.name}</td>
-                            <td>{city.state}</td>
-                            <td>{city.country}</td>
-                            <td>{city.lat}</td>
-                            <td>{city.lon}</td>
+                {city.sunriseSunsets.map(sunriseSunset => (
+                        <tr key={sunriseSunset.date}>
+                            <td>{sunriseSunset.id}</td>
+                            <td>{sunriseSunset.date.substring(0,10)}</td>
+                            <td>{sunriseSunset.sunrise}</td>
+                            <td>{sunriseSunset.sunset}</td>
                             <td>
-                                <button onClick={e => navigate(`/admin/cities/${city.name}`)}>details</button>
+                                <button>edit</button>
                             </td>
                             <td>
-                                <button onClick={e => handleEdit(city.name)}>edit</button>
-                            </td>
-                            <td>
-                                <button onClick={() => handleDelete(city.name)}>delete</button>
+                                <button onClick={() => handleDelete(city.name, sunriseSunset.date)}>delete</button>
                             </td>
                         </tr>
-                    ) : (
-                        <tr key={city.name}>
-                            <td>{city.name}</td>
-                            <td>
-                                <input
-                                    value={city.country}
-                                    onChange={e => ({...city, country: e.target.value})}
-                                    placeholder="Country"
-                                    type="text"
-                                    name="country"
-                                    id="city-country"
-                                />
-                            </td>
-                            <td>
-                                <input
-                                    value={city.state}
-                                    onChange={e => ({...city, state: e.target.value})}
-                                    placeholder="State"
-                                    type="text"
-                                    name="state"
-                                    id="city-state"
-                                />
-                            </td>
-                            <td>
-                                <input
-                                    value={city.lat}
-                                    onChange={e => ({...city, lat: e.target.value})}
-                                    placeholder="Lat"
-                                    type="text"
-                                    name="lat"
-                                    id="city-lat"
-                                />
-                            </td>
-                            <td>
-                                <input
-                                    value={city.lon}
-                                    onChange={e => ({...city, lon: e.target.value})}
-                                    placeholder="Lon"
-                                    type="text"
-                                    name="lon"
-                                    id="coty-lon"
-                                />
-                            </td>
-                            <td>
-                                <Link to="/admin/cities/:name">
-                                    <button>details</button>
-                                </Link>
-                            </td>
-                            <td>
-                                <button onClick={e => handleEdit(city.name)}>edit</button>
-                            </td>
-                            <td>
-                                <button onClick={() => handleDelete(city.name)}>delete</button>
-                            </td>
-                        </tr>
-                    )
                 ))}
                 </tbody>
             </table>
