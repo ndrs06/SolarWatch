@@ -56,10 +56,8 @@ export default function AdminCities() {
         setCities(prev => prev.filter(city => city.name !== cityName));
     }
     
-    const handleEdit = (e, city) => {
-        e.preventDefault();
-        updateCity(city);
-        
+    const handleEdit = (city) => {
+        updateCity(city);        
     }
     
     const handlePost = cityName => {
@@ -91,7 +89,7 @@ export default function AdminCities() {
                         ) : (
                             <>
                                 <th colSpan="2">
-                                    <input onChange={e => setCityName(e.target.value)}/>
+                                    <input placeholder="Name of the city" onChange={e => setCityName(e.target.value)}/>
                                 </th>
                                 <th>
                                     <button onClick={() => {
