@@ -103,7 +103,8 @@ public class AdminController : ControllerBase
     {
         try
         {
-            return Ok($"City {cityName} was successfully added.");
+            await _sunriseSunsetService.AddSunriseSunsetToDb(cityName, date);
+            return Ok($"Sunrise sunset to {cityName} was successfully added.");
         }
         catch (Exception e)
         {
@@ -113,12 +114,12 @@ public class AdminController : ControllerBase
     }
     
     [HttpDelete("sunrise-sunsets")]
-    public ActionResult<string> DeleteSunriseSunsetFromDb(string cityName)
+    public ActionResult<string> DeleteSunriseSunsetFromDb(string cityName, DateTime date)
     {
         try
         {
-            _cityService.DeleteCityFromDb(cityName);
-            return Ok($"{cityName} deleted from DB");
+            _sunriseSunsetService.DeleteSunriseSunsetFromDb(cityName, date);
+            return Ok($"Sunrise sunset from {cityName} was successfully deleted.");
         }
         catch (Exception e)
         {
