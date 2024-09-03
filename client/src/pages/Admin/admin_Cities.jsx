@@ -24,9 +24,8 @@ const updateCity = (city) => fetch(
 
 const deleteCity = (cityName) => fetch(
     `/api/admin/cities?cityName=${cityName}`, {
-        method: "DELETE",      
-    })
-    .catch(err => console.log(err));
+        method: "DELETE",
+    }).catch(err => console.log(err));
 
 export default function AdminCities() {
     const navigate = useNavigate();
