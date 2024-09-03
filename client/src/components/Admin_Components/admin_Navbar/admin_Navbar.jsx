@@ -10,9 +10,6 @@ export default function AdminNavbar() {
             <Link to="/admin/cities">
                 <button>Cities</button>
             </Link>
-            <Link to="/admin/cities/solar-watches">
-                <button>SolarWatches</button>
-            </Link>
             <Link to="/">
                 <button>Go-UserPage</button>
             </Link>
