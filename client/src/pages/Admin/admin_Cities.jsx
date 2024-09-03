@@ -14,9 +14,10 @@ const postCity = (cityName) => fetch(
     .catch(err => console.log(err));
 
 const updateCity = (city) => fetch(
-    `/api/admin/cities?cityName=${city.name}`, {
+    `/api/admin/cities/${city.name}`, {
         method: "PATCH",
         headers: {
+            "accept": "text/plain",
             "Content-Type": "application/json"
         },
         body: JSON.stringify(city)});
@@ -57,7 +58,9 @@ export default function AdminCities() {
     }
     
     const handleEdit = (city) => {
-        updateCity(city);        
+        updateCity(city)
+            .then(_ => getCities())
+            .then(data => setCities(data));        
     }
     
     const handlePost = cityName => {
@@ -117,7 +120,6 @@ export default function AdminCities() {
                                 <button onClick={() => {
                                     setEditCity({...editCity, [city.name]: !editCity[city.name]})
                                     setCity({...city})
-                                    console.log(cityState)
                                 }}>edit</button>
                             </td>
                             <td>
@@ -130,7 +132,7 @@ export default function AdminCities() {
                             <td>
                                 <input
                                     value={cityState.state}
-                                    onChange={e => setCity({...city, state: e.target.value})}
+                                    onChange={e => setCity({...cityState, state: e.target.value})}
                                     placeholder="State"
                                     type="text"
                                     name="state"
@@ -140,7 +142,7 @@ export default function AdminCities() {
                             <td>
                                 <input
                                     value={cityState.country}
-                                    onChange={e => setCity({...city, country: e.target.value})}
+                                    onChange={e => setCity({...cityState, country: e.target.value})}
                                     placeholder="Country"
                                     type="text"
                                     name="country"
@@ -150,7 +152,7 @@ export default function AdminCities() {
                             <td>
                                 <input
                                     value={cityState.lat}
-                                    onChange={e => setCity({...city, lat: e.target.value})}
+                                    onChange={e => setCity({...cityState, lat: e.target.value})}
                                     placeholder="Lat"
                                     type="text"
                                     name="lat"
@@ -160,7 +162,7 @@ export default function AdminCities() {
                             <td>
                                 <input
                                     value={cityState.lon}
-                                    onChange={e => setCity({...city, lon: e.target.value})}
+                                    onChange={e => setCity({...cityState, lon: e.target.value})}
                                     placeholder="Lon"
                                     type="text"
                                     name="lon"
@@ -173,7 +175,6 @@ export default function AdminCities() {
                             <td>
                             <button type="submit"
                                 onClick={() => {
-                                console.log(cityState.name)
                                 handleEdit(cityState);
                                 setEditCity({...editCity, [city.name]: !editCity[city.name]})
                             }}>submit</button>
