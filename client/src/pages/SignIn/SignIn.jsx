@@ -1,9 +1,8 @@
 import './SignIn.scss';
 import React from 'react';
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useProfile } from '../../contexts/ProfileContext';
 
-import Navbar from "../../components/Navbar/Navbar.jsx";
 import SignInForm from "../../components/SignInForm/SignInForm.jsx";
 
 const postSignIn = (user) => {
@@ -17,25 +16,21 @@ const postSignIn = (user) => {
         if (!resp.ok) {
             throw new Error(`HTTP error! status: ${resp.status}`);
         }
-        return resp
+        return resp.json()
     }).catch(err => {
         console.error('Error:', err);
     });
 }
 
-
 export default function SignIn() {
     const navigate = useNavigate();
-    const { login } = useProfile();
+    const { signIn } = useProfile();
     
     const handleSignIn = (user) => {
-        postSignIn(user).then(resp => {
-            if (!resp.ok)
-            {
-                navigate("/sign-in")                
-            }
-            login();
-            navigate("/solar-watch")            
+        postSignIn(user).then(data => {
+            signIn();
+            navigate("/solar-watch") 
+            console.log(data);
         })
     }
     
