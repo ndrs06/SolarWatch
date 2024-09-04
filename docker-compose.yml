@@ -1,0 +1,44 @@
+﻿version: '3.8'
+
+networks:
+  solar-watch:  
+
+services:
+  db-solar-watch-app:
+    container_name: db-solar-watch-app
+    image: mcr.microsoft.com/mssql/server:latest
+    ports:
+      - "1433:1433"
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "MyPassword!"
+    networks:
+      - solar-watch
+      
+  api-solar-watch-app:
+    container_name: api-solar-watch-app
+    image: api-solar-watch-app:latest
+    build:
+      context: ./SolarWatchAPI
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db-solar-watch-app
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__MSSQL_CONNECTION=Server=db-solar-watch-app;Database=db_SolarWatch;User Id=sa;Password=MyPassword!;Encrypt=false;
+    networks:
+      - solar-watch
+        
+  client-solar-watch-app:
+    container_name: client-solar-watch-app
+    image: client-solar-watch-app:latest
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    networks:
+      - solar-watch
+
