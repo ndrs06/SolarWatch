@@ -5,7 +5,7 @@ import SolarWatchResult from "../../components/SolarWatchResult/SolarWatchResult
 import SolarWatchReqForm from "../../components/SolarWatchReqForm/SolarWatchReqForm.jsx";
 
 const getSolarWatch = (reqSolarWatch) => {
-    return fetch(`/api/SolarWatch/?cityName=${reqSolarWatch.cityName}&date=${reqSolarWatch.date}`)
+    return fetch(`/api/solar-watch?cityName=${reqSolarWatch.cityName}&date=${reqSolarWatch.date}`)
         .then(resp => {
         if (!resp.ok) {
             throw new Error(`HTTP error! status: ${resp.status}`);

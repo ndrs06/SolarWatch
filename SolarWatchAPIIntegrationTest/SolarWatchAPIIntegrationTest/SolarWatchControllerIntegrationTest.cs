@@ -1,4 +1,6 @@
+using System.Net;
 using System.Net.Http.Json;
+using System.Text.Json;
 using Microsoft.Extensions.Logging;
 using Moq;
 using SolarWatchAPI.Controllers;
@@ -13,70 +15,39 @@ namespace SolarWatchAPIIntegrationTest;
 
 public class SolarWatchControllerIntegrationTest
 {
-    private readonly SolarWatchWebApplicationFactory _app;
     private readonly HttpClient _client;
-    private readonly Mock<ILogger<SolarWatchController>> _loggerMock;
-    private readonly Mock<ICityService> _cityServiceMock;
-    private readonly Mock<ISunriseSunsetService> _sunriseSunsetServiceMock;
+    private readonly SolarWatchWebApplicationFactory _app;
 
     public SolarWatchControllerIntegrationTest()
     {
         _app = new SolarWatchWebApplicationFactory();
         _client = _app.CreateClient();
-        _loggerMock = new Mock<ILogger<SolarWatchController>>();
-        _cityServiceMock = new Mock<ICityService>();
-        _sunriseSunsetServiceMock = new Mock<ISunriseSunsetService>();
-        
-        ConfigureMockServices();
-    }
-    
-    private void ConfigureMockServices()
-    {
-
-        _loggerMock.Setup(log => log.Log(
-            It.IsAny<LogLevel>(),
-            It.IsAny<EventId>(),
-            It.IsAny<object>(),
-            It.IsAny<Exception>(),
-            (Func<object, Exception, string>)It.IsAny<object>()));
-
-        
-        _cityServiceMock.Setup(service => service.GetByName(It.IsAny<string>()))
-            .Returns((string cityName) => new City
-            {
-                Name = cityName,
-                Lat = 47.4979,
-                Lon = 19.0402
-            });
-
-        _sunriseSunsetServiceMock.Setup(service => service.GetByCityNameAndDate(It.IsAny<string>(), It.IsAny<DateTime>()))
-            .Returns((string cityName, DateTime date) => new SunriseSunset
-            {
-                CityName = cityName,
-                Date = date,
-                Sunrise = new TimeOnly(06, 20),
-                Sunset = new TimeOnly(14, 54)
-            });
     }
 
     [Fact]
-    public async Task TestEndPoint()
+    public async Task GetSolarWatch_ReturnsOk_WhenCityAndDateExists()
     {
         // Arrange
-        var cityName = "Budapest";
-        var date = new DateTime(2012, 12, 12);
+        var cityName = "Miskolc";
+        var date = DateTime.UtcNow.Date;
         
         // Act
-        var response = await _client.GetAsync($"api/SolarWatch?cityName={cityName}&date={date}");
-
+        var response = await _client.GetAsync($"/api/solar-watch?cityName={cityName}&date={date:yyyy-MM-dd}");
+        
         // Assert
         response.EnsureSuccessStatusCode();
-        var data = await response.Content.ReadFromJsonAsync<SolarWatch>();
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
         
-        Assert.NotNull(data);
-        Assert.Equal(cityName, data.City);
-        Assert.Equal(date, data.Date);
-        Assert.Equal(new TimeOnly(06, 20), data.Sunrise);
-        Assert.Equal(new TimeOnly(14, 54), data.Sunset);
+        var content = await response.Content.ReadAsStringAsync();
+        var solarWatch = JsonSerializer.Deserialize<SolarWatch>(content, new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        });
+
+        Assert.NotNull(solarWatch);
+        Assert.Equal("Miskolc", solarWatch.City);
+        Assert.Equal(date, solarWatch.Date);
+        Assert.Equal(new TimeOnly(6, 0), solarWatch.Sunrise);
+        Assert.Equal(new TimeOnly(18, 0), solarWatch.Sunset);
     }
 }

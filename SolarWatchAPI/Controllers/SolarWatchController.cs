@@ -5,7 +5,7 @@ using SolarWatchAPI.Service;
 namespace SolarWatchAPI.Controllers;
 
 [ApiController]
-[Route("api/[controller]")]
+[Route("api/solar-watch")]
 public class SolarWatchController : ControllerBase
 {
     private readonly ILogger<SolarWatchController> _logger;
@@ -19,7 +19,7 @@ public class SolarWatchController : ControllerBase
         _sunriseSunsetService = sunriseSunsetService;
     }
     
-    [HttpGet(Name = "SolarWatch/{cityName}/{date}")]
+    [HttpGet(Name = "solar-watch")]
     public async Task<ActionResult<SolarWatch>> GetSolarWatch(string cityName, DateTime date)
     {
         try
@@ -37,69 +37,38 @@ public class SolarWatchController : ControllerBase
                 });
             }
 
-            Coordinates coordinates;
-            try
+            var dbCity = _cityService.GetByName(cityName);
+            if (dbCity != null)
             {
-                var dbCity = _cityService.GetByName(cityName);
+                _logger.LogInformation("Coordinates set from DB");
+            }
+            else
+            {
+                _logger.LogInformation($"DB does not contain city with this name: {cityName}");
 
-                if (dbCity != null)
+                try
                 {
-                    coordinates = new Coordinates { Lat = dbCity.Lat, Lon = dbCity.Lon };
-                    _logger.LogInformation("Coordinates set from DB");
+                    await _cityService.AddCityToDb(cityName);
+                    _logger.LogInformation("City {CityName} added to DB", cityName);
                 }
-                else
+                catch (Exception e)
                 {
-                    _logger.LogInformation($"DB does not contain city with this name: {cityName}");
-                    string openWeatherData;
-                    try
-                    {
-                        openWeatherData = await _cityService.GetOpenWeatherMapApiDataAsync(cityName);
-                        coordinates = _cityService.ProcessCityCoordinates(openWeatherData);
+                    Console.WriteLine(e);
+                    return StatusCode(500, $"Failed to add city to the database: {e.Message}");
+                }
                     
-                        _logger.LogInformation("Coordinates data fetched from external API");
-                    }
-                    catch (Exception e)
-                    {
-                        _logger.LogError(e, e.Message);
-                        return BadRequest("");
-                    }
-
-                    try
-                    {
-                        var newCity = _cityService.ProcessCity(openWeatherData);
-                        _cityService.AddCityToDb(newCity);
-                        _logger.LogInformation($"City: {cityName} added to DB");
-                    }
-                    catch (Exception e)
-                    {
-                        _logger.LogError(e, e.Message);
-                        return BadRequest($"Failed to add city {cityName} to DB: {e.Message}");
-                    }
+                dbCity = _cityService.GetByName(cityName);
+                if (dbCity == null)
+                {
+                    _logger.LogError($"Failed to retrieve city {cityName} after adding to DB");
+                    return BadRequest($"City {cityName} could not be retrieved after adding to DB.");
                 }
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine(e);
-                throw;
-            }
-
-            string sunriseSunsetData;
-            try
-            {
-                sunriseSunsetData = await _sunriseSunsetService.GetSunriseSunsetApiDataAsync(date, coordinates);
-                _logger.LogInformation("SunriseSunset data fetched from external API");
-            }
-            catch (Exception e)
-            {
-                _logger.LogError(e, e.Message);
-                return NotFound($"Not found sunriseSunset with these coordinates: {coordinates.Lat}, {coordinates.Lon}, date: {date}");
+                _logger.LogInformation($"City: {cityName} added to DB");
             }
             
             try
             {
-                var newSunriseSunset = _sunriseSunsetService.ProcessSunriseSunset(sunriseSunsetData);
-                newSunriseSunset.CityName = cityName;
-                _sunriseSunsetService.AddSunriseSunsetToDb(newSunriseSunset);
+                await _sunriseSunsetService.AddSunriseSunsetToDb(cityName, date);
                 _logger.LogInformation($"SunriseSunset with date: {date} added to {cityName} in DB");
             }
             catch (Exception e)
@@ -108,9 +77,15 @@ public class SolarWatchController : ControllerBase
                 return BadRequest($"Failed to add sunrise/sunset data to DB: {e.Message}");
             }
             
-            var solarWatch = _sunriseSunsetService.ProcessSolarWatch(sunriseSunsetData);
-            solarWatch.City = cityName;
-            return Ok(solarWatch);
+            dbSunriseSunset = _sunriseSunsetService.GetByCityNameAndDate(cityName, date);
+            
+            return Ok(new SolarWatch
+            {
+                City = dbSunriseSunset.CityName,
+                Date = dbSunriseSunset.Date,
+                Sunrise = dbSunriseSunset.Sunrise,
+                Sunset = dbSunriseSunset.Sunset
+            });
             
         }
         catch (Exception e)

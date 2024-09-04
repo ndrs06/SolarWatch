@@ -9,16 +9,18 @@ namespace SolarWatchAPI.Service;
 public class SunriseSunsetService : ISunriseSunsetService
 {
     private readonly ILogger<SunriseSunsetService> _logger;
+    private readonly ICityRepository _cityRepository;
     private readonly ISunriseSunsetRepository _sunriseSunsetRepository;
     private readonly ISunriseSunsetApiDataProvider _sunriseSunsetApiDataProvider;
     private readonly IJsonProcessor _jsonProcessor;
 
-    public SunriseSunsetService(ILogger<SunriseSunsetService> logger, ISunriseSunsetRepository sunriseSunsetRepository, ISunriseSunsetApiDataProvider sunriseSunsetApiDataProvider, IJsonProcessor jsonProcessor)
+    public SunriseSunsetService(ILogger<SunriseSunsetService> logger, ISunriseSunsetRepository sunriseSunsetRepository, ISunriseSunsetApiDataProvider sunriseSunsetApiDataProvider, IJsonProcessor jsonProcessor, ICityRepository cityRepository)
     {
         _logger = logger;
         _sunriseSunsetRepository = sunriseSunsetRepository;
         _sunriseSunsetApiDataProvider = sunriseSunsetApiDataProvider;
         _jsonProcessor = jsonProcessor;
+        _cityRepository = cityRepository;
     }
 
     public SunriseSunset? GetByCityNameAndDate(string cityName, DateTime date)
@@ -26,23 +28,35 @@ public class SunriseSunsetService : ISunriseSunsetService
         return _sunriseSunsetRepository.GetByCityNameAndDate(cityName, date);
     }
     
-    public void AddSunriseSunsetToDb(SunriseSunset sunriseSunset)
+    public async Task AddSunriseSunsetToDb(string cityName, DateTime date)
     {
+        var sunriseSunset = _sunriseSunsetRepository.GetByCityNameAndDate(cityName, date);
+        if (sunriseSunset != null)
+        {
+            throw new Exception($"Sunrise sunset already exists: {sunriseSunset}");
+        }
+        
+        var city = _cityRepository.GetByName(cityName);
+        if (city == null)
+        {
+            throw new Exception($"City not found: {cityName}");
+        }
+        var coordinates = new Coordinates {Lat = city.Lat, Lon = city.Lon};
+        var jsonData = await _sunriseSunsetApiDataProvider.GetAsync(date, coordinates);
+        sunriseSunset = _jsonProcessor.ProcessSunriseSunset(jsonData);
+        sunriseSunset.CityName = city.Name;
         _sunriseSunsetRepository.Add(sunriseSunset);
     }
 
-    public async Task<string> GetSunriseSunsetApiDataAsync(DateTime date, Coordinates coordinates)
+    public void DeleteSunriseSunsetFromDb(string cityName, DateTime date)
     {
-        return await _sunriseSunsetApiDataProvider.GetAsync(date, coordinates);
-    }
+        var sunriseSunset = _sunriseSunsetRepository.GetByCityNameAndDate(cityName, date);
 
-    public SolarWatch ProcessSolarWatch(string jsonData)
-    {
-        return _jsonProcessor.ProcessSolarWatch(jsonData);
-    }
-
-    public SunriseSunset ProcessSunriseSunset(string jsonData)
-    {
-        return _jsonProcessor.ProcessSunriseSunset(jsonData);
+        if (sunriseSunset == null)
+        {
+            throw new Exception($"Sunrise sunset not found: {sunriseSunset}");
+        }
+        
+        _sunriseSunsetRepository.Delete(sunriseSunset);
     }
 }

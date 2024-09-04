@@ -20,7 +20,9 @@ public class CityRepository : ICityRepository
 
     public City? GetByName(string name)
     {
-        return _dbContext.Cities.FirstOrDefault(c => c.Name == name);
+        return _dbContext.Cities
+            .Include(city => city.SunriseSunsets)
+            .FirstOrDefault(c => c.Name == name);
     }
 
     public void Add(City city)

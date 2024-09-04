@@ -24,9 +24,6 @@ public class SunsetSunriseRepository : ISunriseSunsetRepository
 
     public void Add(SunriseSunset sunriseSunset)
     {
-        // TODO
-        // _dbContext.SunriseSunsets.Add(sunriseSunset); ???????
-        
         _dbContext.Add(sunriseSunset);
         _dbContext.SaveChanges();
     }

@@ -1,5 +1,5 @@
-using SolarWatchAPI.Model;
 using SolarWatchAPI.Model.DataModels;
+using SolarWatchAPI.Model.RequestModels;
 using SolarWatchAPI.Service.DataProviders;
 using SolarWatchAPI.Service.JsonProcessors;
 using SolarWatchAPI.Service.Repository;
@@ -21,38 +21,56 @@ public class CityService : ICityService
         _openWeatherMapApiDataProvider = openWeatherMapApiDataProvider;
     }
 
-    public City? GetByName(string? cityName)
+    public IEnumerable<City> GetAll()
+    {
+        return _cityRepository.GetAll();
+    }
+
+    public City? GetByName(string cityName)
     {
         return _cityRepository.GetByName(cityName);
     }
 
-    public void AddCityToDb(City city)
+    public async Task AddCityToDb(string cityName)
     {
+        var city = _cityRepository.GetByName(cityName);
+
+        if (city != null)
+        {
+            throw new Exception($"City {cityName} already exists");
+        }
+        
+        var jsonData = await _openWeatherMapApiDataProvider.GetAsync(cityName);
+        city = _jsonProcessor.ProcessCity(jsonData);
         _cityRepository.Add(city);
     }
 
-    public void DeleteCityFromDb(City city)
+    public void DeleteCityFromDb(string cityName)
     {
+        var city = _cityRepository.GetByName(cityName);
+        
+        if (city == null)
+        {
+            throw new Exception("City not found");
+        }
+        
         _cityRepository.Delete(city);
     }
 
-    public void UpdateCityInDb(City city)
+    public void UpdateCityInDb(string cityName, CityRequest request)
     {
+        var city = _cityRepository.GetByName(cityName);
+        
+        if (city == null)
+        {
+            throw new Exception("City not found");
+        }
+        
+        city.Country = request.Country;
+        city.State = request.State;
+        city.Lon = request.Lon;
+        city.Lat = request.Lat;
+        
         _cityRepository.Update(city);
-    }
-
-    public async Task<string> GetOpenWeatherMapApiDataAsync(string cityName)
-    {
-        return await _openWeatherMapApiDataProvider.GetAsync(cityName);
-    }
-
-    public Coordinates ProcessCityCoordinates(string jsonData)
-    {
-        return _jsonProcessor.ProcessCoordinates(jsonData);
-    }
-
-    public City ProcessCity(string jsonData)
-    {
-        return _jsonProcessor.ProcessCity(jsonData);
     }
 }

@@ -19,6 +19,30 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+/*  ###############################*/
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+
+tr:hover {background-color: rgba(238, 238, 238, 0.24);}
+
+th {
+  padding-top: 12px;
+  padding-bottom: 12px;
+  text-align: center;
+  background-color: #04AA6D;
+  color: white;
+}
+  
+/*  #####################*/
+
 a {
   font-weight: 500;
   color: #646cff;
