@@ -40,17 +40,13 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Build API Docker image
+    - name: Build and push API Docker image
       run: |
-        docker build -t api-solar-watch-app:latest ./SolarWatchAPI
-        docker tag api-solar-watch-app:latest ${{ secrets.DOCKER_USERNAME }}/api-solar-watch-app:latest
-        docker push ${{ secrets.DOCKER_USERNAME }}/api-solar-watch-app:latest
+        docker buildx build --platform linux/amd64,linux/arm64 -t ${{ secrets.DOCKER_USERNAME }}/api-solar-watch-app:latest ./SolarWatchAPI --push
 
-    - name: Build Client Docker image
+    - name: Build and push Client Docker image
       run: |
-        docker build -t client-solar-watch-app:latest ./client
-        docker tag client-solar-watch-app:latest ${{ secrets.DOCKER_USERNAME }}/client-solar-watch-app:latest
-        docker push ${{ secrets.DOCKER_USERNAME }}/client-solar-watch-app:latest
+        docker buildx build --platform linux/amd64,linux/arm64 -t ${{ secrets.DOCKER_USERNAME }}/client-solar-watch-app:latest ./client --push
 
     - name: Install Docker Compose
       run: |
