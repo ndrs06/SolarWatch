@@ -3,13 +3,19 @@
 body {
   margin: auto;
   height: 100vh;
-  background-color: #242424;
+  background-color: #403030;
 }
 
-:root {
+#root {
   margin: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
   max-width: 1200px;
   height: 100vh;
+  color: rgba(225, 225, 225, 0.95);
+  background-color: #302c2c;
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
 }
 
