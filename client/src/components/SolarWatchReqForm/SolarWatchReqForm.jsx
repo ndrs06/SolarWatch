@@ -17,7 +17,7 @@ export default function SolarWatchReqForm(props) {
     }
 
     return (
-        <form onSubmit={onSubmit}>
+        <form className="solar-watch-request-form" onSubmit={onSubmit}>
             <div>
                 <label htmlFor="solar-watch-city" id="form1" type="text"/>
                 <input
@@ -32,6 +32,7 @@ export default function SolarWatchReqForm(props) {
             <div>
                 <label htmlFor="solar-watch-date" id="form1" type="date"/>
                 <input
+                    className="datepicker-input"
                     value={reqSolarWatch.date}
                     onChange={e => setReqSolarWatch({...reqSolarWatch, date: e.target.value})}
                     placeholder="date"
@@ -40,9 +41,7 @@ export default function SolarWatchReqForm(props) {
                     id="solar-watch-date"
                 />
             </div>
-
             <button type="submit">Show</button>
-
         </form>
     );
 
