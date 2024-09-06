@@ -7,11 +7,11 @@ export default function SolarWatchResult(props) {
     } = props
    
     return (
-        <>
+        <div className="solar-watch-result">
             <p>City: {solarWatch.city}</p>             
             <p>Date: {solarWatch.date.slice(0, 10)}</p>
             <p>Sunrise: {solarWatch.sunrise} - Sunset: {solarWatch.sunset}</p>
-        </>
+        </div>
     )
 
 }
