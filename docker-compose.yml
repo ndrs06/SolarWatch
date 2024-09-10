@@ -19,7 +19,7 @@ services:
     container_name: api-solar-watch-app
     image: api-solar-watch-app:latest
     build:
-      context: ./SolarWatchAPI
+      context: ./server/SolarWatchAPI
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
