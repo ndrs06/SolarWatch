@@ -1,15 +1,10 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolarWatchAPI", "SolarWatchAPI.csproj", "{5B45CE32-49F0-4FAB-9CBE-7F061DCC1F32}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolarWatchAPI", "SolarWatchAPI\SolarWatchAPI.csproj", "{5B45CE32-49F0-4FAB-9CBE-7F061DCC1F32}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolarWatchAPITest", "..\SolarWatchAPITest\SolarWatchAPITest\SolarWatchAPITest.csproj", "{BA4883FB-D1B1-4328-9186-98D28A777ABD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolarWatchAPITest", "SolarWatchAPITest\SolarWatchAPITest.csproj", "{BA4883FB-D1B1-4328-9186-98D28A777ABD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolarWatchAPIIntegrationTest", "..\SolarWatchAPIIntegrationTest\SolarWatchAPIIntegrationTest\SolarWatchAPIIntegrationTest.csproj", "{6CE07D28-383F-44A9-A18E-3255A2A62A1F}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{319B9B4A-FD61-42CA-A249-DFE9955CCDB3}"
-	ProjectSection(SolutionItems) = preProject
-		docker-compose.yml = docker-compose.yml
-	EndProjectSection
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SolarWatchAPIIntegrationTest", "SolarWatchAPIIntegrationTest\SolarWatchAPIIntegrationTest.csproj", "{6CE07D28-383F-44A9-A18E-3255A2A62A1F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
