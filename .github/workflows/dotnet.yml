@@ -21,15 +21,15 @@ jobs:
         
     - name: Restore dependencies
       run: dotnet restore
-      working-directory: ./SolarWatchAPI
+      working-directory: ./server/SolarWatchAPI
       
     - name: Build API
       run: dotnet build --no-restore
-      working-directory: ./SolarWatchAPI
+      working-directory: ./server/SolarWatchAPI
 
     - name: Test API
       run: dotnet test --no-build --verbosity normal
-      working-directory: ./SolarWatchAPI
+      working-directory: ./server/SolarWatchAPI
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v2
