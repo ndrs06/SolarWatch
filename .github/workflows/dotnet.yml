@@ -42,12 +42,10 @@ jobs:
 
     - name: Build API Docker image
       run: |
-        docker build -t api-solar-watch-app:latest ./SolarWatchAPI
-        docker tag api-solar-watch-app:latest ${{ secrets.DOCKER_USERNAME }}/api-solar-watch-app:latest
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/api-solar-watch-app:latest ./server/SolarWatchAPI
         docker push ${{ secrets.DOCKER_USERNAME }}/api-solar-watch-app:latest
         
     - name: Build Client Docker image
       run: |
-        docker build -t client-solar-watch-app:latest ./client
-        docker tag client-solar-watch-app:latest ${{ secrets.DOCKER_USERNAME }}/client-solar-watch-app:latest
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/client-solar-watch-app:latest ./client
         docker push ${{ secrets.DOCKER_USERNAME }}/client-solar-watch-app:latest
