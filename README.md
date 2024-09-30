@@ -102,7 +102,7 @@ Execute the test suite using the following command:
 
 ## 📌 Project Roadmap
 
-[SolarWatch_pb.](https://github.com/users/ndrs06/projects/3/settings)
+[SolarWatch_pb.](https://github.com/users/ndrs06/projects/3)
 
 ---
 
