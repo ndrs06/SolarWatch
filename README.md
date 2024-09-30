@@ -1,8 +1,4 @@
-[<img src="https://img.icons8.com/?size=512&id=55494&format=png" align="right" width="25%" padding-right="350">]()
-
-# `SOLARWATCH`
-
-#### <code>❯ REPLACE-ME</code>
+# `SolarWatch`
 
 <p align="left">
 	<img src="https://img.shields.io/github/license/ndrs06/SolarWatch?style=plastic&logo=opensourceinitiative&logoColor=white&color=0080ff" alt="license">
